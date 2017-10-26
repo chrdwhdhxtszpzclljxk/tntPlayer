@@ -2,6 +2,7 @@ package com.gwgz.tntplayer;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ public class MainActy extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.acty_main);
 
         // Example of a call to a native method
@@ -25,8 +27,9 @@ public class MainActy extends AppCompatActivity {
         WebView wv = (WebView)findViewById(R.id.mainWebView);
         WebSettings wst = wv.getSettings();
         wst.setJavaScriptEnabled(true);
+        wst.setAllowFileAccessFromFileURLs(true);
 
-        wv.loadUrl("file:///android_asset/www/login.html");
+        wv.loadUrl("file:///android_asset/www/index.html");
 
     }
 
