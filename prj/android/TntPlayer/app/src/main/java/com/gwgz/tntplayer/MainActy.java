@@ -54,7 +54,7 @@ public class MainActy extends AppCompatActivity {
 
                                                 // 如果 authority  = 预先约定协议里的 webview，即代表都符合约定的协议
                                                 // 所以拦截url,下面JS开始调用Android需要的方法
-                                                if (uri.getAuthority().equals("demo")) {
+                                                if (uri.getAuthority().equals("cpp")) {
 
                                                     //
                                                     // 执行JS所需要调用的逻辑
