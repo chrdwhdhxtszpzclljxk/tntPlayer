@@ -36,11 +36,16 @@
   <div class="views tabs toolbar-through">
     <!-- Your first view, it is also a .tab and should have "active" class to make it visible by default-->
     <div id="view-1" class="view view-main tab active">
+      <!-- We can make with view with navigation, let's add Top Navbar-->
+      <div class="navbar">
+        <div class="navbar-inner">
+          <div class="center sliding"><i class="icon demo-icon-1" style="margin-right:8px;margin-top:0px;"></i>来自唐能通的消息</div>
+        </div>
+      </div>
       <!-- Pages-->
       <div class="pages">
         <!-- Page, data-page contains page name-->
         <div data-page="index-1" class="page">
-
           <div class="page-content pull-to-refresh-content">
             <div class="pull-to-refresh-layer">
               <div class="preloader"></div>
@@ -59,7 +64,7 @@
                 </li>
               </ul>
               <div class="list-block-label">
-                <p>Just pull page down to let the magic happen.</p>
+                <p>下拉可以刷新当前页面.</p>
               </div>
             </div>
           </div>
@@ -308,29 +313,6 @@
         </a>
       </div>
 
-      <!--
-      <div class="toolbar-inner">
-        <a href="#tab1" class="tab-link active">
-          <i class="icon demo-icon-1">
-
-          </i>
-          <span class="tabbar-label">消息</span>
-        </a>
-        <a href="#tab2" class="tab-link">
-          <i class="icon demo-icon-2"></i>
-          <span class="tabbar-label">光盘课</span>
-        </a>
-        <a href="#tab3" class="tab-link">
-          <i class="icon demo-icon-3"></i>
-          <span class="tabbar-label">公式课</span>
-        </a>
-        <a href="#tab4" class="tab-link">
-          <i class="icon demo-icon-4"></i>
-          <span class="tabbar-label">我的</span>
-        </a>
-      </div>
--->
-
     </div>
   </div>
 
@@ -339,7 +321,9 @@
     <!-- Path to Framework7 Library JS-->
     <script type="text/javascript" src="js/framework7.min.js"></script>
     <!-- Path to your app js-->
+    <script type="text/javascript" src="js/pageInit.js"></script>
     <script type="text/javascript" src="js/my-app.js"></script>
+
 
     <script>
 

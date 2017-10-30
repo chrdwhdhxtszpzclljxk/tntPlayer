@@ -1,5 +1,7 @@
 // Initialize your app
-var myApp = new Framework7();
+var myApp = new Framework7({
+    onPageInit:pageInit,
+});
 
 // Export selectors engine
 var $$ = Dom7;
@@ -28,7 +30,7 @@ ptrContent.on('refresh', function (e) {
         // Random image
         var picURL = 'http://hhhhold.com/88/d/jpg?' + Math.round(Math.random() * 100);
         // Random song
-        var song = songs[Math.floor(Math.random() * songs.length)];
+        var song = +songs[Math.floor(Math.random() * songs.length)];
         // Random author
         var author = authors[Math.floor(Math.random() * authors.length)];
         // List item html
