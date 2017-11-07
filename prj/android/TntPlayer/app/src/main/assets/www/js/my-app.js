@@ -23,12 +23,36 @@ var authors = ['Beatles', 'Queen', 'Michael Jackson', 'Red Hot Chili Peppers'];
 // Pull to refresh content
 var ptrContent = $$('.pull-to-refresh-content');
 
+
 // Add 'refresh' listener on it
 ptrContent.on('refresh', function (e) {
     // Emulate 2s loading
+
+    $$.ajax({
+      url: 'https://gpk01.gwgz.com:666/ashx/gpk_message_get.ashx',
+      dataType:'json',
+      success: function (data, status, xhr){
+        if(data.cs=="1"){
+            alert(data.rd.rows[0][0]);
+        }
+      },
+      error:function (xhr, status){
+      }
+      ,
+      statusCode: {
+        404: function (xhr) {
+          alert('page not found');
+        }
+      }
+    });
+
+
+
+
+
     setTimeout(function () {
         // Random image
-        var picURL = 'http://hhhhold.com/88/d/jpg?' + Math.round(Math.random() * 100);
+        var picURL = 'https://gpk01.gwgz.com:666/images/tnt/avter-200.jpg';
         // Random song
         var song = +songs[Math.floor(Math.random() * songs.length)];
         // Random author
