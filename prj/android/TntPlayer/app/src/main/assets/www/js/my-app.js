@@ -27,28 +27,61 @@ var ptrContent = $$('.pull-to-refresh-content');
 // Add 'refresh' listener on it
 ptrContent.on('refresh', function (e) {
     // Emulate 2s loading
-
+    var that = $$(e.currentTarget);
+    var lastdate = that.data('lastdate');
+    if (typeof(lastdate) == "undefined"){
+        lastdate = 0;
+    }
     $$.ajax({
       url: 'https://gpk01.gwgz.com:666/ashx/gpk_message_get.ashx',
+      data:{'topflag':lastdate},
       dataType:'json',
       success: function (data, status, xhr){
         if(data.cs=="1"){
-            alert(data.rd.rows[0][0]);
+            //alert(data.rd.rows[0][0]);
+            var itemHTML="";
+            //var lastdate = 0;
+            $$.each(data.rd.rows, function (index, value) {
+                var val = value[1];//parseInt(value[1].replace("/Date(", "").replace(")/", ""), 10)
+                if(lastdate < val){
+                    lastdate = val;
+                }
+                // Random image
+                var picURL = 'https://gpk01.gwgz.com:666/images/tnt/avter-200.jpg';
+                // Random song
+                var song = value[3];
+                // Random author
+                var author = '唐能通';
+                // List item html
+                itemHTML = itemHTML + '<li class="item-content">' +
+                                  '<div class="item-media"><img src="' + picURL + '" width="44"/></div>' +
+                                  '<div class="item-inner">' +
+                                    '<div class="item-title-row">' +
+                                      '<div class="item-title">' + song + '</div>' +
+                                    '</div>' +
+                                    '<div class="item-subtitle">' + author + '</div>' +
+                                  '</div>' +
+                                '</li>';
+
+
+            });
+            // Prepend new list element
+            that.find('ul').prepend(itemHTML);
+            that.data('lastdate',lastdate);
+
         }
       },
       error:function (xhr, status){
-      }
-      ,
-      statusCode: {
-        404: function (xhr) {
-          alert('page not found');
-        }
-      }
+      },
+      complete:function (xhr, status){
+        // When loading done, we need to reset it
+        myApp.pullToRefreshDone();
+      },
     });
 
 
 
-
+return;
 
     setTimeout(function () {
         // Random image
