@@ -29,25 +29,28 @@ ptrContent.on('refresh', function (e) {
     // Emulate 2s loading
     var that = $$(e.currentTarget);
     var lastdate = that.data('lastdate');
+    var iconpath = that.data('iconpath');
+    var viewtype = that.data('viewtype');
     if (typeof(lastdate) == "undefined"){
         lastdate = 0;
     }
     $$.ajax({
       url: 'https://gpk01.gwgz.com:666/ashx/gpk_message_get.ashx',
-      data:{'topflag':lastdate},
+      data:{'topflag':lastdate,'viewtype':viewtype},
       dataType:'json',
       success: function (data, status, xhr){
         if(data.cs=="1"){
             //alert(data.rd.rows[0][0]);
             var itemHTML="";
             //var lastdate = 0;
+            if(data.rd.rows.length < 1) prompt("js://cpp?cmd=toast&arg1=获取数据动作成功！暂无此数据！");
             $$.each(data.rd.rows, function (index, value) {
                 var val = value[1];//parseInt(value[1].replace("/Date(", "").replace(")/", ""), 10)
                 if(lastdate < val){
                     lastdate = val;
                 }
                 // Random image
-                var picURL = 'https://gpk01.gwgz.com:666/images/tnt/avter-200.jpg';
+                var picURL = iconpath;
                 // Random song
                 var song = value[3];
                 // Random author
@@ -69,6 +72,8 @@ ptrContent.on('refresh', function (e) {
             that.find('ul').prepend(itemHTML);
             that.data('lastdate',lastdate);
 
+        }else{
+            prompt("js://cpp?cmd=toast&arg1=" + data.err);
         }
       },
       error:function (xhr, status){

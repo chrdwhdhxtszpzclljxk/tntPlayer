@@ -31,6 +31,25 @@
         background-image: url("../img/my-on.png");
       }
 
+      i.demo-icon-5 {
+        width: 25px;
+        height: 30px;
+        background-image: url("../img/00.jpg");
+      }
+      .active i.demo-icon-5 {
+        background-image: url("../img/00.jpg");
+      }
+
+      i.demo-icon-6 {
+        width: 25px;
+        height: 30px;
+        background-image: url("../img/003.jpg");
+      }
+      .active i.demo-icon-6 {
+        background-image: url("../img/003.jpg");
+      }
+
+
       .msg_title_avter{
         width:40px;height:40px;
         border-radius:40px;

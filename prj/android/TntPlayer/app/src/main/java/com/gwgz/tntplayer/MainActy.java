@@ -13,6 +13,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -50,6 +51,14 @@ public class MainActy extends AppCompatActivity {
                                 System.out.println("js调用了Android的方法");
                                 HashMap<String, String> params = new HashMap<>();
                                 Set<String> collection = uri.getQueryParameterNames();
+                                String acionData = uri.getQueryParameter("cmd");
+                                String par1 = uri.getQueryParameter("arg1");
+
+                                if(acionData.equals("toast")){
+                                    System.out.println("js调用了Android的方法" + acionData + par1);
+                                    Toast.makeText(MainActy.this, par1, Toast.LENGTH_LONG).show();
+                                }
+
                                 result.confirm("js调用了Android的方法成功啦");
                             }
                             return true;
