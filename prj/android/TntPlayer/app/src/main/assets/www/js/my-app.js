@@ -43,7 +43,7 @@ ptrContent.on('refresh', function (e) {
             //alert(data.rd.rows[0][0]);
             var itemHTML="";
             //var lastdate = 0;
-            if(data.rd.rows.length < 1) prompt("js://cpp?cmd=toast&arg1=获取数据动作成功！暂无此数据！");
+            if(data.rd.rows.length < 1) prompt("js://cpp?cmd=toast&arg1=获取数据动作成功！暂无最新数据！");
             $$.each(data.rd.rows, function (index, value) {
                 var val = value[1];//parseInt(value[1].replace("/Date(", "").replace(")/", ""), 10)
                 if(lastdate < val){
