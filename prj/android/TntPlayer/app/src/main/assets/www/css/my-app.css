@@ -49,6 +49,14 @@
         background-image: url("../img/003.jpg");
       }
 
+      i.demo-icon-99 {
+        width: 25px;
+        height: 30px;
+        background-image: url("../img/tx200.png");
+      }
+      .active i.demo-icon-99 {
+        background-image: url("../img/tx200.png");
+      }
 
       .msg_title_avter{
         width:40px;height:40px;

@@ -39,6 +39,7 @@ public class MainActy extends AppCompatActivity {
         WebSettings wst = wv.getSettings();
         wst.setJavaScriptEnabled(true);
         wst.setAllowFileAccessFromFileURLs(true);
+        wst.setAllowUniversalAccessFromFileURLs(true);
         wst.setJavaScriptCanOpenWindowsAutomatically(true);
 
         wv.setWebChromeClient(
@@ -48,15 +49,16 @@ public class MainActy extends AppCompatActivity {
                         Uri uri = Uri.parse(message);
                         if ( uri.getScheme().equals("js")) {
                             if (uri.getAuthority().equals("cpp")) {
-                                System.out.println("js调用了Android的方法");
+                                System.out.println("js调用了Android的方法" + message);
                                 HashMap<String, String> params = new HashMap<>();
                                 Set<String> collection = uri.getQueryParameterNames();
                                 String acionData = uri.getQueryParameter("cmd");
                                 String par1 = uri.getQueryParameter("arg1");
 
                                 if(acionData.equals("toast")){
-                                    System.out.println("js调用了Android的方法" + acionData + par1);
                                     Toast.makeText(MainActy.this, par1, Toast.LENGTH_LONG).show();
+                                }else if(acionData.equals("play")){
+
                                 }
 
                                 result.confirm("js调用了Android的方法成功啦");
