@@ -1,5 +1,6 @@
 package com.gwgz.tntplayer;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +31,10 @@ public class MainActy extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.acty_main);
-
+        String path = getFilesDir().getAbsolutePath();
+        setWritablePath(path);
+        if(createHttpsdownloader() < 1)
+            Toast.makeText(MainActy.this,"创建https下载失败",Toast.LENGTH_LONG).show();
         // Example of a call to a native method
         TextView tv = (TextView) findViewById(R.id.sample_text);
         tv.setText(stringFromJNI());
@@ -58,7 +62,18 @@ public class MainActy extends AppCompatActivity {
                                 if(acionData.equals("toast")){
                                     Toast.makeText(MainActy.this, par1, Toast.LENGTH_LONG).show();
                                 }else if(acionData.equals("play")){
+                                    String type = uri.getQueryParameter("type");
+                                    String tnow = uri.getQueryParameter("tnow");
+                                    String pubid = uri.getQueryParameter("pubid");
+                                    Intent intent = new Intent();
+                                    intent.setClass(MainActy.this, PlayActy.class);
+                                    Bundle bundle=new Bundle();
+                                    bundle.putString("type",type );
+                                    bundle.putString("tnow",tnow );
+                                    bundle.putString("pubid",pubid );
+                                    intent.putExtras(bundle);
 
+                                    startActivity(intent);
                                 }
 
                                 result.confirm("js调用了Android的方法成功啦");
@@ -118,5 +133,8 @@ public class MainActy extends AppCompatActivity {
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
+    public native static String stringFromJNI();
+    public native static short createHttpsdownloader();
+    public native static short httpsdownloaderPush(String type,String tnow,String pubid);
+    public native static void setWritablePath(String path);
 }

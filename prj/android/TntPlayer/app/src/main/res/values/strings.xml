@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">唐能通课件</string>
+
+    <string name="title_activity_play_acty">课件播放</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

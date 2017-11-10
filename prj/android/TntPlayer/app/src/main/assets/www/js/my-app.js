@@ -68,7 +68,7 @@ $$('ul').on('click', '.item-content', function (e) {
     var that = $$(this);
     var itemdata = JSON.parse(that.data("itemdata"));
     if(itemdata[5] == "92b3bc2f-124d-4c96-85e7-a81f2cdadfea"){
-       prompt("js://cpp?cmd=play&type="+itemdata[5]+"&tnow="+itemdata[1]);
+       prompt("js://cpp?cmd=play&type="+itemdata[5]+"&tnow="+itemdata[1]+"&pubid="+itemdata[8]);
     }
 
 });
