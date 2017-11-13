@@ -8,6 +8,15 @@
 
 #include <string>
 
+class fileinfo{
+public:
+    std::string fileType;
+    std::string fileId;
+    std::string pubId;
+    int64_t errcount;
+};
+
+
 class crossanyapp {
 private:
     crossanyapp(){};

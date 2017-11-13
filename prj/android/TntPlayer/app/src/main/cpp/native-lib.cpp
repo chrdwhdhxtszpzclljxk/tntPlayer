@@ -2,6 +2,7 @@
 #include <string>
 #include "httpsdownloader.h"
 #include "crossanyapp.h"
+#include "gtmvreader.h"
 
 char* jstringTostring(JNIEnv* env, jstring jstr);
 std::string jstring2string(JNIEnv* env,jstring jstr);
@@ -14,8 +15,9 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_gwgz_tntplayer_MainActy_stringFrom
 
 extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_createHttpsdownloader(
         JNIEnv *env, jobject /* this */) {
-    if (httpsdownloader::me() == nullptr) return 0;
+    //if (httpsdownloader::me() == nullptr) return 0;
     if(crossanyapp::me() == nullptr) return 0;
+    if(gtmvreader::me() == nullptr) return 0;
     return 1;
 }
 
@@ -24,7 +26,7 @@ extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_httpsdownlo
     char* ptype = jstringTostring(env,type);
     char* ptnow = jstringTostring(env,tnow);
     char* ppubid = jstringTostring(env,pubid);
-    httpsdownloader::me()->push(ptype,ptnow,ppubid);
+    gtmvreader::me()->push(ptype,ptnow,ppubid);
     delete ptype;
     delete ptnow;
     delete ppubid;

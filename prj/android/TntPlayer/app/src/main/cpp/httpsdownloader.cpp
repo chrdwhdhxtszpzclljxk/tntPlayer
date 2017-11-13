@@ -4,7 +4,7 @@
 #include <thread>
 #include <android/log.h>
 #include <sys/stat.h>
-#include <curl/curl.h>
+//#include <curl/curl.h>
 
 #include "httpsdownloader.h"
 #include "crossanyapp.h"
@@ -65,6 +65,7 @@ bool httpsdownloader::init(){
     return true;
 }
 
+/*
 
 // 获取服务器上的文件大小
 double getDownloadFileLength(std::string url){
@@ -103,3 +104,4 @@ double getDownloadFileLength(std::string url){
     curl_easy_cleanup(easy_handle);
     return size;
 }
+ */

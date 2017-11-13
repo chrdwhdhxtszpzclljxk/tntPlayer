@@ -10,9 +10,10 @@ cmake_minimum_required(VERSION 3.4.1)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
-include_directories(../../../../crossany/external/curl/include/android)
+#include_directories(../../../../crossany/external/curl/include/android)
 
 #add_subdirectory(src/main/cpp/)
+#add_subdirectory(../../../../crossany/external/curl-7.55.1 curl.out)
 
 #message(${CROSSANY_SRC})
 
@@ -27,6 +28,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/httpclient.cpp
              src/main/cpp/httpsdownloader.cpp
              src/main/cpp/crossanyapp.cpp
+             src/main/cpp/gtmvreader.cpp
              )
 
 

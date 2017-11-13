@@ -17,9 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
+import static com.gwgz.tntplayer.PlayActy.verifyStoragePermissions;
+
 public class MainActy extends AppCompatActivity {
+    static public String basePath;
+    static public List<String> listdl;
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -31,7 +36,9 @@ public class MainActy extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.acty_main);
+        verifyStoragePermissions(this);
         String path = getFilesDir().getAbsolutePath();
+        basePath = path;
         setWritablePath(path);
         if(createHttpsdownloader() < 1)
             Toast.makeText(MainActy.this,"创建https下载失败",Toast.LENGTH_LONG).show();

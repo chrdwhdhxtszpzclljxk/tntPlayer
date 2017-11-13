@@ -62,8 +62,8 @@ ptrContent.on('refresh', function (e) {
 
 $$('ul').on('click', '.item-content', function (e) {
     if(!ui.login){
-        myApp.loginScreen();
-        return;
+        //myApp.loginScreen();
+        //return;
     }
     var that = $$(this);
     var itemdata = JSON.parse(that.data("itemdata"));

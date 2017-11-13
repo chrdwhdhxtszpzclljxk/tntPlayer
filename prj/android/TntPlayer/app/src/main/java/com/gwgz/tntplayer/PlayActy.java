@@ -1,12 +1,26 @@
 package com.gwgz.tntplayer;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.format.Time;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -88,9 +102,7 @@ public class PlayActy extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.acty_play);
-        //新页面接收数据
         Bundle bundle = this.getIntent().getExtras();
-        //接收name值
         String type = bundle.getString("type");
         String tnow = bundle.getString("tnow");
         String pubid = bundle.getString("pubid");
@@ -100,20 +112,58 @@ public class PlayActy extends AppCompatActivity {
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
-
-
-        // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toggle();
             }
         });
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
+        //https://gpk01.gwgz.com:666/data/174406/2017/11/2017-11-10_20_24_19.gtmv
+        Date d = new Date(Long.parseLong(tnow) * 1000);
+        SimpleDateFormat dateFormat =new SimpleDateFormat("yyyy/MM/yyyy-MM-dd_HH_mm_ss");
+        TimeZone timeZone = TimeZone.getTimeZone("GMT+8");
+        dateFormat.setTimeZone(timeZone);
+        String filepath = dateFormat.format(d);
+        final String url = "https://gpk01.gwgz.com:666/data/" + pubid + "/" + filepath + ".gtmv";
+        String localfile = MainActy.basePath + "/data/"+pubid+"/" + tnow + ".gtmv";
+        final String pubid0 = pubid;
+        final String tnow0 = tnow;
+        try {
+            long filelengthr = getHttpfileLength(url);
+            File f = new File(localfile);
+            long filelengthl = f.length();
+            if(filelengthl == filelengthr){
+                Toast.makeText(this,"播放！！！！",Toast.LENGTH_LONG).show();
+                return;
+            }else{
+                f.delete();
+                synchronized (MainActy.listdl){
+                    MainActy.listdl.add(pubid);
+                }
+            }
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                synchronized (MainActy.listdl){
+                }
+                HttpDownloader downloader = new HttpDownloader();
+                int result = downloader.downloadFile(url, "/data/"+pubid0+"/", tnow0 + ".gtmv");
+                System.out.println(result);
+            }
+        }).start();
+    }
+
+    private int getHttpfileLength(String urlpath)  throws IOException {
+        URL u = new URL(urlpath);
+        HttpURLConnection urlcon = (HttpURLConnection) u.openConnection();
+        urlcon.setRequestProperty("Accept-Encoding", "identity");
+        int fileLength =  urlcon.getContentLength();
+        return fileLength;
     }
 
     @Override
@@ -168,4 +218,22 @@ public class PlayActy extends AppCompatActivity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE);
+        }
+    }
+
 }
