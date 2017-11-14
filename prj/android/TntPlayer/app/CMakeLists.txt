@@ -29,6 +29,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/httpsdownloader.cpp
              src/main/cpp/crossanyapp.cpp
              src/main/cpp/gtmvreader.cpp
+             src/main/cpp/basesocket.cpp
              )
 
 

@@ -3,6 +3,7 @@ package com.gwgz.tntplayer;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,15 +17,20 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.gwgz.tntplayer.PlayActy.verifyStoragePermissions;
 
 public class MainActy extends AppCompatActivity {
     static public String basePath;
-    static public List<String> listdl;
+    static public Map<String,DownloadItem> listdl;
+    static public String un;
+    static public String pwd;
+
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -34,13 +40,14 @@ public class MainActy extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        listdl = new HashMap<String, DownloadItem>();
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.acty_main);
         verifyStoragePermissions(this);
         String path = getFilesDir().getAbsolutePath();
         basePath = path;
         setWritablePath(path);
-        if(createHttpsdownloader() < 1)
+        if(initNdkApp() < 1)
             Toast.makeText(MainActy.this,"创建https下载失败",Toast.LENGTH_LONG).show();
         // Example of a call to a native method
         TextView tv = (TextView) findViewById(R.id.sample_text);
@@ -79,8 +86,11 @@ public class MainActy extends AppCompatActivity {
                                     bundle.putString("tnow",tnow );
                                     bundle.putString("pubid",pubid );
                                     intent.putExtras(bundle);
-
                                     startActivity(intent);
+                                }else if(acionData.equals("login")){
+                                    MainActy.un = uri.getQueryParameter("un");
+                                    MainActy.pwd = uri.getQueryParameter("pwd");
+                                    setUnPwd(MainActy.un,MainActy.pwd);
                                 }
 
                                 result.confirm("js调用了Android的方法成功啦");
@@ -141,7 +151,8 @@ public class MainActy extends AppCompatActivity {
      * which is packaged with this application.
      */
     public native static String stringFromJNI();
-    public native static short createHttpsdownloader();
-    public native static short httpsdownloaderPush(String type,String tnow,String pubid);
+    public native static short initNdkApp();
+    public native static short gtmvreaderPush(String type,String tnow,String pubid);
     public native static void setWritablePath(String path);
+    public native static void setUnPwd(String un,String pwd);
 }

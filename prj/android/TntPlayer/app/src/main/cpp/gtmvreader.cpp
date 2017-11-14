@@ -21,15 +21,16 @@ void gtmvreader::httpsdownloaderThread(){
             std::this_thread::sleep_for (std::chrono::seconds(1));
             continue;
         }
-        __android_log_print(ANDROID_LOG_INFO,"JNI/download","got one!");
+        __android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","got one!");
         char path[2048] = {0};
         const char* ppath = crossanyapp::me()->getWritablePath().c_str();
         const char* ppubid = fi->pubId.c_str();
         const char* pfileId = fi->fileId.c_str();
         sprintf(path,"%s/data/%s/%s.gtmv",ppath,ppubid,pfileId);
-        __android_log_print(ANDROID_LOG_INFO,"JNI/download","%s",path);
+        __android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","%s",path);
         FILE * fh = fopen(path,"r");
         if(fh != 0) {
+            __android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","Read File OK!");
             fclose(fh);
         }
 

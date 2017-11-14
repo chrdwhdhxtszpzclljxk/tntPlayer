@@ -23,10 +23,16 @@ private:
     ~crossanyapp(){};
     bool init();
     std::string writablePath;
+    std::string un;
+    std::string pwd;
 public:
     static crossanyapp* me();
     std::string getWritablePath(){return writablePath;};
     std::string setWritablePath(std::string path);
+    std::string getun(){return un;};
+    std::string setun(std::string un0){return (un = un0);};
+    std::string getPwd(){return pwd;};
+    std::string setPwd(std::string pwd0){return (pwd = pwd0);};
 
 };
 

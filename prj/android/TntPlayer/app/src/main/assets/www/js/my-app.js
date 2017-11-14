@@ -62,8 +62,8 @@ ptrContent.on('refresh', function (e) {
 
 $$('ul').on('click', '.item-content', function (e) {
     if(!ui.login){
-        //myApp.loginScreen();
-        //return;
+        myApp.loginScreen();
+        return;
     }
     var that = $$(this);
     var itemdata = JSON.parse(that.data("itemdata"));
@@ -82,7 +82,7 @@ $$('a.login-button').on('click',function(){
     }
     $$.ajax({
       url: 'https://gpk01.gwgz.com:666/ashx/login.ashx',
-      data:{'cmd':'login','un':un,'pwd':pwd},
+      data:{'cmd':'login','un':un,'pwd':pwd,'type':1},
       dataType:'json',
       success: function (data, status, xhr){
         if(data.cs=="1"){
@@ -92,6 +92,7 @@ $$('a.login-button').on('click',function(){
             }
             //$$.each(data.rd.rows, function (index, value) {
             try{
+            prompt("js://cpp?cmd=login&un="+un+"&pwd="+pwd);
             ui.login = true;
             ui.userguid=data.rd.rows[0][0];
            // });

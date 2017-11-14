@@ -7,22 +7,18 @@
 char* jstringTostring(JNIEnv* env, jstring jstr);
 std::string jstring2string(JNIEnv* env,jstring jstr);
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_gwgz_tntplayer_MainActy_stringFromJNI(
-        JNIEnv *env, jobject /* this */) {
+extern "C" JNIEXPORT jstring JNICALL Java_com_gwgz_tntplayer_MainActy_stringFromJNI(JNIEnv *env, jobject /* this */) {
     std::string hello = "Hello from C++";
     return env->NewStringUTF(hello.c_str());
 }
 
-extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_createHttpsdownloader(
-        JNIEnv *env, jobject /* this */) {
-    //if (httpsdownloader::me() == nullptr) return 0;
+extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_initNdkApp(JNIEnv *env, jobject /* this */) {
     if(crossanyapp::me() == nullptr) return 0;
     if(gtmvreader::me() == nullptr) return 0;
     return 1;
 }
 
-extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_httpsdownloaderPush(
-        JNIEnv *env, jobject /* this */,jstring type,jstring tnow ,jstring pubid) {
+extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_gtmvreaderPush(JNIEnv *env, jobject /* this */,jstring type,jstring tnow ,jstring pubid) {
     char* ptype = jstringTostring(env,type);
     char* ptnow = jstringTostring(env,tnow);
     char* ppubid = jstringTostring(env,pubid);
@@ -33,8 +29,12 @@ extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_httpsdownlo
     return 1;
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_MainActy_setWritablePath(
-        JNIEnv *env, jobject /* this */,jstring path) {
+extern "C" JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_MainActy_setUnPwd(JNIEnv *env, jobject /* this */,jstring un,jstring pwd) {
+    crossanyapp::me()->setun(jstring2string(env,un));
+    crossanyapp::me()->setPwd(jstring2string(env,pwd));
+}
+
+extern "C" JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_MainActy_setWritablePath(JNIEnv *env, jobject /* this */,jstring path) {
     crossanyapp::me()->setWritablePath(jstring2string(env,path));
 }
 

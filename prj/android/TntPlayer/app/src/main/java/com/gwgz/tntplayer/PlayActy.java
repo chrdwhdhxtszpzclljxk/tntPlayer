@@ -4,15 +4,21 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.io.File;
 import java.io.IOException;
@@ -100,15 +106,11 @@ public class PlayActy extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.acty_play);
         Bundle bundle = this.getIntent().getExtras();
         String type = bundle.getString("type");
         String tnow = bundle.getString("tnow");
         String pubid = bundle.getString("pubid");
-
-        MainActy.httpsdownloaderPush(type,tnow,pubid);
-
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
@@ -120,50 +122,77 @@ public class PlayActy extends AppCompatActivity {
         });
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
-        //https://gpk01.gwgz.com:666/data/174406/2017/11/2017-11-10_20_24_19.gtmv
-        Date d = new Date(Long.parseLong(tnow) * 1000);
-        SimpleDateFormat dateFormat =new SimpleDateFormat("yyyy/MM/yyyy-MM-dd_HH_mm_ss");
-        TimeZone timeZone = TimeZone.getTimeZone("GMT+8");
-        dateFormat.setTimeZone(timeZone);
-        String filepath = dateFormat.format(d);
-        final String url = "https://gpk01.gwgz.com:666/data/" + pubid + "/" + filepath + ".gtmv";
-        String localfile = MainActy.basePath + "/data/"+pubid+"/" + tnow + ".gtmv";
-        final String pubid0 = pubid;
-        final String tnow0 = tnow;
         try {
-            long filelengthr = getHttpfileLength(url);
-            File f = new File(localfile);
-            long filelengthl = f.length();
-            if(filelengthl == filelengthr){
-                Toast.makeText(this,"播放！！！！",Toast.LENGTH_LONG).show();
-                return;
-            }else{
-                f.delete();
-                synchronized (MainActy.listdl){
-                    MainActy.listdl.add(pubid);
-                }
-            }
+            getHttpfileLength(tnow,pubid);
+            return;
         }catch(Exception e){
             System.out.println(e.toString());
         }
+
+    }
+
+    private void  getHttpfileLength(String tnow0,String pubid0) {
+        final String key = pubid0 + tnow0;
+        synchronized (MainActy.listdl) {
+            if (MainActy.listdl.containsKey(key)) {
+                Toast.makeText(PlayActy.this, "该课件已在缓存列表！请稍后...", Toast.LENGTH_LONG).show();
+                return; // 正在下载中。。。
+            }
+        }
+        final DownloadItem di = new DownloadItem();
+        di.tnow = tnow0;
+        di.pubid = pubid0;
         new Thread(new Runnable(){
             @Override
             public void run() {
-                synchronized (MainActy.listdl){
+                try {
+                    HttpDownloader downloader = new HttpDownloader();
+                    String url0 = di.geturlp();
+                    String json = downloader.download(di.geturlp());
+                    JSONObject jso = new JSONObject(json);
+                    if(jso.getInt("cs") != 1){
+
+                    }
+                    URL u = new URL(di.geturlp());
+                    HttpURLConnection urlcon = (HttpURLConnection) u.openConnection();
+                    urlcon.setRequestProperty("Accept-Encoding", "identity");
+                    int fileLength = urlcon.getContentLength();
+                    File f = new File(di.getlocal());
+                    long len = f.length();
+                    if(len == fileLength){ // ready to play!
+                        MainActy.gtmvreaderPush("0",di.tnow,di.pubid);
+                    }else {
+                        synchronized (MainActy.listdl) {
+                            MainActy.listdl.put(key,di);
+                        }
+                        try {
+                            f.delete();
+                        }catch (Exception e){
+
+                        }
+                        final String key0 = key;
+                        new Thread(new Runnable(){
+                            @Override
+                            public void run() {
+                                DownloadItem di = null;
+                                synchronized (MainActy.listdl){
+                                    di = MainActy.listdl.get(key0);
+                                }
+                                if(di != null) {
+                                    HttpDownloader downloader = new HttpDownloader();
+                                    int result = downloader.downloadFile(di.geturl(), di.getpath(),di.getfile());//"/data/" + pubid0 + "/", tnow0 + ".gtmv");
+                                    synchronized (MainActy.listdl){
+                                        MainActy.listdl.remove(key0);
+                                    }
+                                }
+                            }
+                        }).start();
+                    }
+                }catch(Exception e){
+                    Log.d("PlayActy",e.getMessage());
                 }
-                HttpDownloader downloader = new HttpDownloader();
-                int result = downloader.downloadFile(url, "/data/"+pubid0+"/", tnow0 + ".gtmv");
-                System.out.println(result);
             }
         }).start();
-    }
-
-    private int getHttpfileLength(String urlpath)  throws IOException {
-        URL u = new URL(urlpath);
-        HttpURLConnection urlcon = (HttpURLConnection) u.openConnection();
-        urlcon.setRequestProperty("Accept-Encoding", "identity");
-        int fileLength =  urlcon.getContentLength();
-        return fileLength;
     }
 
     @Override
