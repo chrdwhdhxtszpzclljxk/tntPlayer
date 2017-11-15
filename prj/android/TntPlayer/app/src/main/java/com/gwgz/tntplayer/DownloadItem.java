@@ -9,6 +9,7 @@ import java.util.TimeZone;
  */
 
 public class DownloadItem {
+    public long filesize;
     public String tnow;
     public String pubid;
     public String geturlp(){

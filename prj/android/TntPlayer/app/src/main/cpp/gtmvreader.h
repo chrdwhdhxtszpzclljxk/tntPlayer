@@ -20,7 +20,7 @@ private:
     std::recursive_mutex _lock;
 public:
     static gtmvreader* me();
-    void push(std::string type,std::string tnow,std::string pubid);
+    void push(std::string type,std::string tnow,std::string pubid,long);
 };
 
 

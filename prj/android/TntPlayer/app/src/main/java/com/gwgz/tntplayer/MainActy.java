@@ -152,7 +152,7 @@ public class MainActy extends AppCompatActivity {
      */
     public native static String stringFromJNI();
     public native static short initNdkApp();
-    public native static short gtmvreaderPush(String type,String tnow,String pubid);
+    public native static short gtmvreaderPush(String type,String tnow,String pubid,long filelen);
     public native static void setWritablePath(String path);
     public native static void setUnPwd(String un,String pwd);
 }

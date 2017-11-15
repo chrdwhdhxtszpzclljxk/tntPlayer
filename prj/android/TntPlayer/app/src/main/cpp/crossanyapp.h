@@ -13,6 +13,7 @@ public:
     std::string fileType;
     std::string fileId;
     std::string pubId;
+    long filelen;
     int64_t errcount;
 };
 

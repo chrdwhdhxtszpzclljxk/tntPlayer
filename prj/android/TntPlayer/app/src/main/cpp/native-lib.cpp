@@ -18,11 +18,11 @@ extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_initNdkApp(
     return 1;
 }
 
-extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_gtmvreaderPush(JNIEnv *env, jobject /* this */,jstring type,jstring tnow ,jstring pubid) {
+extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_gtmvreaderPush(JNIEnv *env, jobject /* this */,jstring type,jstring tnow ,jstring pubid,jlong filelen) {
     char* ptype = jstringTostring(env,type);
     char* ptnow = jstringTostring(env,tnow);
     char* ppubid = jstringTostring(env,pubid);
-    gtmvreader::me()->push(ptype,ptnow,ppubid);
+    gtmvreader::me()->push(ptype,ptnow,ppubid,filelen);
     delete ptype;
     delete ptnow;
     delete ppubid;
