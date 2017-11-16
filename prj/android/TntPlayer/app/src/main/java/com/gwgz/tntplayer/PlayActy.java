@@ -188,7 +188,7 @@ public class PlayActy extends AppCompatActivity {
                     File f = new File(di.getlocal());
                     long len = f.length();
                     if(len == fileLength){ // ready to play!
-                        MainActy.gtmvreaderPush("0",di.tnow,di.pubid,fileLength);
+                        //MainActy.gtmvreaderPush("0",di.tnow,di.pubid,fileLength);
                     }else {
                         synchronized (MainActy.listdl) {
                             MainActy.listdl.put(key,di);
@@ -217,6 +217,7 @@ public class PlayActy extends AppCompatActivity {
                             }
                         }).start();
                     }
+                    MainActy.gtmvreaderPush("0",di.tnow,di.pubid,fileLength);
                 }catch(Exception e){
                     Log.d("PlayActy",e.getMessage());
                 }
@@ -240,7 +241,7 @@ public class PlayActy extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             // TODO Auto-generated method stub
-            Log.d("MyHandler", "handleMessage......");
+
             super.handleMessage(msg);
             // 此处可以更新UI
             Bundle b = msg.getData();
@@ -392,7 +393,7 @@ public class PlayActy extends AppCompatActivity {
                     b.putString("cmd","dlprogress");
                     b.putString("dlprogress", String.valueOf(len));
                     msg.setData(b);
-
+                    Log.d("MyHandler", "sendMessage......" + String.valueOf(len) + fileName);
                     PlayActy.this.myHandler.sendMessage(msg);
                 }
                 input.close();
@@ -461,16 +462,6 @@ public class PlayActy extends AppCompatActivity {
                 File resultFile = filesys.write2SDFromInput(path, fileName, inputStream);
                 if(resultFile == null)
                     return -1;
-            /*
-            if(filesys.isFileExist(path + fileName)){
-                return 1;
-            }else{
-                inputStream = getInputStreamFromUrlStr(urlStr);
-                File resultFile = filesys.write2SDFromInput(path, fileName, inputStream);
-                if(resultFile == null)
-                    return -1;
-            }
-            */
             }catch(Exception e){
                 e.printStackTrace();
                 return -1;

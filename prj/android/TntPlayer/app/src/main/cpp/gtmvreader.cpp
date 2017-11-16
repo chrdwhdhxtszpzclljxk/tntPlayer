@@ -36,8 +36,7 @@ void gtmvreader::httpsdownloaderThread(){
             FILE *fp = fopen(path, "r");
             if (fp != 0) {
                 if (((fread(&header, 1, sizeof(header), fp) == sizeof(header)) && (fread(&mt, 1, sizeof(mt), fp) == sizeof(mt)))){
-
-
+                    __android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","open success %s",path);
 
                     ok = true;
                 }
