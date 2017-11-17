@@ -92,7 +92,7 @@ $$('a.login-button').on('click',function(){
             }
             //$$.each(data.rd.rows, function (index, value) {
             try{
-            prompt("js://cpp?cmd=login&un="+un+"&pwd="+pwd);
+            prompt("js://cpp?cmd=login&un="+un+"&pwd="+pwd+"&userid="+data.rd.rows[0][1]);
             ui.login = true;
             ui.userguid=data.rd.rows[0][0];
            // });

@@ -10,12 +10,27 @@ cmake_minimum_required(VERSION 3.4.1)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
+ADD_DEFINITIONS(-DFIXED_POINT)
+ADD_DEFINITIONS(-DUSE_KISS_FFT)
+
+
+
 #include_directories(../../../../crossany/external/curl/include/android)
+
 
 #add_subdirectory(src/main/cpp/)
 #add_subdirectory(../../../../crossany/external/curl-7.55.1 curl.out)
 
 #message(${CROSSANY_SRC})
+
+add_subdirectory(src/main/cpp/libspeex)
+AUX_SOURCE_DIRECTORY(src/main/cpp/libspeex LIBSPEEX)
+
+add_subdirectory(src/main/cpp/android)
+AUX_SOURCE_DIRECTORY(src/main/cpp/android LIBANDROID)
+
+add_subdirectory(src/main/cpp/cryptopp565)
+AUX_SOURCE_DIRECTORY(src/main/cpp/cryptopp565 LIBCRYPTOPP565)
 
 add_library( # Sets the name of the library.
              native-lib
@@ -30,6 +45,10 @@ add_library( # Sets the name of the library.
              src/main/cpp/crossanyapp.cpp
              src/main/cpp/gtmvreader.cpp
              src/main/cpp/basesocket.cpp
+             src/main/cpp/speex_jni.cpp
+             ${LIBSPEEX}
+             ${LIBANDROID}
+             ${LIBCRYPTOPP565}
              )
 
 
@@ -46,6 +65,22 @@ find_library( # Sets the name of the path variable.
               # you want CMake to locate.
               log )
 
+find_library( # Sets the name of the path variable.
+          android-lib
+
+          # Specifies the name of the NDK library that
+          # you want CMake to locate.
+          android )
+
+
+find_library( # Sets the name of the path variable.
+          OpenSLES-lib
+
+          # Specifies the name of the NDK library that
+          # you want CMake to locate.
+          OpenSLES )
+
+
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
@@ -55,4 +90,7 @@ target_link_libraries( # Specifies the target library.
 
                        # Links the target library to the log library
                        # included in the NDK.
-                       ${log-lib} )
+                       ${log-lib}
+                        ${android-lib}
+                        ${OpenSLES-lib}
+                       )

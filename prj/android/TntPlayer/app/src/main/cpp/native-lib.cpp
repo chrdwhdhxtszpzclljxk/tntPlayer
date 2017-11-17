@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <string>
+#include <android/asset_manager_jni.h>
 #include "httpsdownloader.h"
 #include "crossanyapp.h"
 #include "gtmvreader.h"
@@ -13,10 +14,14 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_gwgz_tntplayer_MainActy_stringFrom
 }
 
 extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_initNdkApp(JNIEnv *env, jobject /* this */) {
-    if(crossanyapp::me() == nullptr) return 0;
-    if(gtmvreader::me() == nullptr) return 0;
+    gtmvreader::me()->start();
     return 1;
 }
+
+extern "C" JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_MainActy_setAssetManager(JNIEnv *env, jobject /* this */, jobject assetManager) {
+    crossanyapp::me()->setAm(AAssetManager_fromJava( env, assetManager ));
+}
+
 
 extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_gtmvreaderPush(JNIEnv *env, jobject /* this */,jstring type,jstring tnow ,jstring pubid,jlong filelen) {
     char* ptype = jstringTostring(env,type);
@@ -29,9 +34,10 @@ extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_gtmvreaderP
     return 1;
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_MainActy_setUnPwd(JNIEnv *env, jobject /* this */,jstring un,jstring pwd) {
+extern "C" JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_MainActy_setUnPwd(JNIEnv *env, jobject /* this */,jstring un,jstring pwd,jstring userid) {
     crossanyapp::me()->setun(jstring2string(env,un));
     crossanyapp::me()->setPwd(jstring2string(env,pwd));
+    crossanyapp::me()->setUserid(jstring2string(env,userid));
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_MainActy_setWritablePath(JNIEnv *env, jobject /* this */,jstring path) {
@@ -70,4 +76,17 @@ char* jstringTostring(JNIEnv* env, jstring jstr){
     }
     env->ReleaseByteArrayElements(barr, ba, 0);
     return rtn;
+}
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+    JNIEnv *env = NULL;
+    jint result = -1;
+    if (vm->GetEnv((void **) &env, JNI_VERSION_1_4) != JNI_OK) {
+        return result;
+    }
+    if(crossanyapp::me() == nullptr) return 0;
+    if(gtmvreader::me() == nullptr) return 0;
+    //crossanyapp::me()->setJvm(vm);
+    // 返回jni的版本
+    return JNI_VERSION_1_4;
 }

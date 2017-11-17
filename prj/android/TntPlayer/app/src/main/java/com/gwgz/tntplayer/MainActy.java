@@ -30,6 +30,7 @@ public class MainActy extends AppCompatActivity {
     static public Map<String,DownloadItem> listdl;
     static public String un;
     static public String pwd;
+    static public String userid;
 
 
     // Used to load the 'native-lib' library on application startup.
@@ -47,8 +48,10 @@ public class MainActy extends AppCompatActivity {
         String path = getFilesDir().getAbsolutePath();
         basePath = path;
         setWritablePath(path);
+        setAssetManager(getAssets());
         if(initNdkApp() < 1)
             Toast.makeText(MainActy.this,"创建https下载失败",Toast.LENGTH_LONG).show();
+
         // Example of a call to a native method
         TextView tv = (TextView) findViewById(R.id.sample_text);
         tv.setText(stringFromJNI());
@@ -90,7 +93,8 @@ public class MainActy extends AppCompatActivity {
                                 }else if(acionData.equals("login")){
                                     MainActy.un = uri.getQueryParameter("un");
                                     MainActy.pwd = uri.getQueryParameter("pwd");
-                                    setUnPwd(MainActy.un,MainActy.pwd);
+                                    MainActy.userid = uri.getQueryParameter("userid");
+                                    setUnPwd(MainActy.un,MainActy.pwd,MainActy.userid);
                                 }
 
                                 result.confirm("js调用了Android的方法成功啦");
@@ -154,5 +158,6 @@ public class MainActy extends AppCompatActivity {
     public native static short initNdkApp();
     public native static short gtmvreaderPush(String type,String tnow,String pubid,long filelen);
     public native static void setWritablePath(String path);
-    public native static void setUnPwd(String un,String pwd);
+    public native static void setUnPwd(String un,String pwd,String id);
+    public native static void setAssetManager(Object o);
 }
