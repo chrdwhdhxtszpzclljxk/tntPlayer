@@ -4,6 +4,7 @@
 #include "httpsdownloader.h"
 #include "crossanyapp.h"
 #include "gtmvreader.h"
+#include "AudioEngine.h"
 
 char* jstringTostring(JNIEnv* env, jstring jstr);
 std::string jstring2string(JNIEnv* env,jstring jstr);
@@ -32,6 +33,11 @@ extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_gtmvreaderP
     delete ptnow;
     delete ppubid;
     return 1;
+}
+
+extern "C" JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_MainActy_audioEngineStop(JNIEnv *env, jobject /* this */) {
+    gtmvreader::me()->setbreaknow();
+
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_MainActy_setUnPwd(JNIEnv *env, jobject /* this */,jstring un,jstring pwd,jstring userid) {

@@ -160,4 +160,5 @@ public class MainActy extends AppCompatActivity {
     public native static void setWritablePath(String path);
     public native static void setUnPwd(String un,String pwd,String id);
     public native static void setAssetManager(Object o);
+    public native static void audioEngineStop();
 }

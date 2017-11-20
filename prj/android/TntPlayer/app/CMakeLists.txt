@@ -16,6 +16,7 @@ ADD_DEFINITIONS(-DUSE_KISS_FFT)
 
 
 #include_directories(../../../../crossany/external/curl/include/android)
+include_directories(src/main/cpp/cryptopp565)
 
 
 #add_subdirectory(src/main/cpp/)

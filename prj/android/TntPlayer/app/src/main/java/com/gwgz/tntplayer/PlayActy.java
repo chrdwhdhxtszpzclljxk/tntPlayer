@@ -3,9 +3,14 @@ package com.gwgz.tntplayer;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Looper;
 import android.os.Message;
@@ -17,6 +22,8 @@ import android.os.Handler;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
@@ -24,6 +31,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -124,6 +132,7 @@ public class PlayActy extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //setContentView(new MySurfaceView(getApplicationContext())); // 别忘了开始的时候载入我们加工好的的SurfaceView
         setContentView(R.layout.acty_play);
         myHandler = new MyHandler();
         Bundle bundle = this.getIntent().getExtras();
@@ -131,6 +140,14 @@ public class PlayActy extends AppCompatActivity {
         String tnow = bundle.getString("tnow");
         String pubid = bundle.getString("pubid");
         mVisible = true;
+        //mContentView = new MySurfaceView(getApplicationContext());//findViewById(R.id.fullscreen_content);
+        //FrameLayout fl = findViewById(R.id.framelayout_main);
+
+        //FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+         //       new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT,
+          //              FrameLayout.LayoutParams.FILL_PARENT));
+
+        //fl.addView(mContentView);
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
         mContentView.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +156,7 @@ public class PlayActy extends AppCompatActivity {
                 toggle();
             }
         });
+
         //findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
         InitWebView();
 
@@ -151,6 +169,9 @@ public class PlayActy extends AppCompatActivity {
         }
 
     }
+
+
+
 
     private void  getHttpfileLength(String tnow0,String pubid0) {
         final String key = pubid0 + tnow0;
@@ -257,7 +278,11 @@ public class PlayActy extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onPause() {
+        MainActy.audioEngineStop();
+        super.onPause();
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

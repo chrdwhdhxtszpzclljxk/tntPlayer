@@ -13,6 +13,12 @@
 #include "protocol.h"
 #include "speex_jni.h"
 #include "AudioEngine.h"
+#include "cryptlib.h"
+#include "osrng.h"
+#include "base64.h"
+#include "default.h"
+#include "gzip.h"
+#include "zlib.h"
 
 float CCRANDOM_0_1(){
     return std::rand() / (float)RAND_MAX;
@@ -52,6 +58,17 @@ bool load192k(const int64_t& idx, unsigned char* buf, int64_t& len){
 
 void asleep(int n){
     std::this_thread::sleep_for (std::chrono::milliseconds(n));
+}
+
+void ProcessBuffTrans(/*CryptoPP::BufferedTransformation& buf,*/ const byte* input, int inputlen,byte** output, int* outputlen)
+{
+    CryptoPP::ZlibDecompressor buf;
+    buf.Put(input, inputlen);
+    buf.MessageEnd();
+    int len = buf.MaxRetrievable();
+    *output = new byte[len];
+    buf.Get(*output, len);
+    *outputlen = len;
 }
 
 void gtmvreader::httpsdownloaderThread(){
@@ -153,12 +170,15 @@ void gtmvreader::httpsdownloaderThread(){
                                 v->now = atoi(pfileId); v->start = 0; v->end = 0; v->ticks = 0;
 
                                 //v->len = ZipUtils::inflateMemoryWithHint(pnode->data, pnode->len, &out, yv12len);
+                                int zliblen = 0;
+                                ProcessBuffTrans(pnode->data,pnode->len,&out,&zliblen);
+                                v->len = zliblen;
                                 if (v->len == 0) {
                                     //bkeepcheckfile = true;
                                     breaknow = true;
                                 }
                                 for (i = 0; i < yv12len; i++){ out[i] ^= key; if (out[i] != 0) yv12buf[i] = out[i]; } // ���ء�
-                                free(out); memcpy(v->data, yv12buf, yv12len);
+                                delete [] out; memcpy(v->data, yv12buf, yv12len);
                                 mvq.push(v); memmove(lastv, v, sizeof(xiny120::GtmvData) + yv12len);	//SaveToBmp(v->data, mt.wid, mt.hei, 0);
                                 //log("mvq size:%d",mvq.size());
                             }
@@ -186,7 +206,10 @@ void gtmvreader::httpsdownloaderThread(){
                                             gtmvrender::me()->pushv(vprepare);
                                         }
                                     }
-                                    while (xiny120::AudioEngine::me()->isfull(len * 2) &&  (!breaknow)){ asleep(200); }
+                                    while (xiny120::AudioEngine::me()->isfull(len * 2) &&  (!breaknow)){
+                                        __android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","queue full!");
+                                        asleep(200);
+                                    }
                                     if (markerspan[markerspanid] < totalframes){
                                         if (((unsigned char*)amcur - a192k) < a192klenloaded){
                                             short* dst = (short*)a; // ���ƻ���
@@ -222,9 +245,27 @@ void gtmvreader::httpsdownloaderThread(){
                     } while (!breaknow);
                     delete[] yv12buf;
                     ok = true;
-                }
 
+                    delete[](char*) lastv; delete[] pbuf;
+                    while (!mvq.empty()){
+                        xiny120::GtmvData* vprepare = mvq.front(); mvq.pop();
+                        if (vprepare != NULL){
+                            vprepare->start = refStartV; refStartV += refTS; vprepare->end = refStartV;
+                            gtmvrender::me()->pushv(vprepare);
+                        }
+                    }
+                    if (breaknow){ gtmvrender::me()->clear(); xiny120::AudioEngine::me()->clear(); }
+                    xiny120::GtmvData* vend = new xiny120::GtmvData;
+                    vend->id = atoi(ppubid); vend->type = xiny120::C_PU_AUDIO; vend->len = 0; vend->width = 0; vend->height = 0;
+                    vend->now = atoi(pfileId); vend->start = 0; vend->end = 0; vend->ticks = 0;
+                    gtmvrender::me()->pushv(vend); xiny120::AudioEngine::me()->setbreaknow();
+                    while (!xiny120::AudioEngine::me()->empty() && r && (!breaknow)){ asleep(1);}
+                    xiny120::AudioEngine::me()->stop();
+
+                }
                 fclose(fp);
+
+
             }
 
             if(retry <= 1) break;

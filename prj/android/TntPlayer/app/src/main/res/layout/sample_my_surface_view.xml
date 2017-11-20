@@ -3,15 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.gwgz.tntplayer.PlayControler
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
+    <com.gwgz.tntplayer.MySurfaceView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:background="#ccc"
         android:paddingBottom="40dp"
         android:paddingLeft="20dp"
         app:exampleColor="#33b5e5"
         app:exampleDimension="24sp"
         app:exampleDrawable="@android:drawable/ic_menu_add"
-        app:exampleString="Hello, PlayControler" />
+        app:exampleString="Hello, MySurfaceView" />
 
 </FrameLayout>
