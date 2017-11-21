@@ -8,24 +8,20 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+
+import java.nio.Buffer;
 
 /**
  * TODO: document your custom view class.
  */
 public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable  {
-    private String mExampleString; // TODO: use a default from R.string...
-    private int mExampleColor = Color.RED; // TODO: use a default from R.color...
-    private float mExampleDimension = 0; // TODO: use a default from R.dimen...
-    private Drawable mExampleDrawable;
-
-    private TextPaint mTextPaint;
-    private float mTextWidth;
-    private float mTextHeight;
 
     public MySurfaceView(Context context) {
         super(context);
@@ -47,152 +43,10 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.MySurfaceView, defStyle, 0);
 
-        mExampleString = a.getString(
-                R.styleable.MySurfaceView_exampleString);
-        mExampleColor = a.getColor(
-                R.styleable.MySurfaceView_exampleColor,
-                mExampleColor);
-        // Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
-        // values that should fall on pixel boundaries.
-        mExampleDimension = a.getDimension(
-                R.styleable.MySurfaceView_exampleDimension,
-                mExampleDimension);
-
-        if (a.hasValue(R.styleable.MySurfaceView_exampleDrawable)) {
-            mExampleDrawable = a.getDrawable(
-                    R.styleable.MySurfaceView_exampleDrawable);
-            mExampleDrawable.setCallback(this);
-        }
-
         a.recycle();
-
-        // Set up a default TextPaint object
-        mTextPaint = new TextPaint();
-        mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setTextAlign(Paint.Align.LEFT);
-
-        // Update TextPaint and text measurements from attributes
-        invalidateTextPaintAndMeasurements();
-
         this.surfaceHolder = this.getHolder();
         this.surfaceHolder.addCallback(this);
         this.obj = new GameObject();
-    }
-
-    private void invalidateTextPaintAndMeasurements() {
-        mTextPaint.setTextSize(mExampleDimension);
-        mTextPaint.setColor(mExampleColor);
-        mTextWidth = mTextPaint.measureText(mExampleString);
-
-        Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-        mTextHeight = fontMetrics.bottom;
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        // TODO: consider storing these as member variables to reduce
-        // allocations per draw cycle.
-        int paddingLeft = getPaddingLeft();
-        int paddingTop = getPaddingTop();
-        int paddingRight = getPaddingRight();
-        int paddingBottom = getPaddingBottom();
-
-        int contentWidth = getWidth() - paddingLeft - paddingRight;
-        int contentHeight = getHeight() - paddingTop - paddingBottom;
-
-        // Draw the text.
-        canvas.drawText(mExampleString,
-                paddingLeft + (contentWidth - mTextWidth) / 2,
-                paddingTop + (contentHeight + mTextHeight) / 2,
-                mTextPaint);
-
-        // Draw the example drawable on top of the text.
-        if (mExampleDrawable != null) {
-            mExampleDrawable.setBounds(paddingLeft, paddingTop,
-                    paddingLeft + contentWidth, paddingTop + contentHeight);
-            mExampleDrawable.draw(canvas);
-        }
-    }
-
-    /**
-     * Gets the example string attribute value.
-     *
-     * @return The example string attribute value.
-     */
-    public String getExampleString() {
-        return mExampleString;
-    }
-
-    /**
-     * Sets the view's example string attribute value. In the example view, this string
-     * is the text to draw.
-     *
-     * @param exampleString The example string attribute value to use.
-     */
-    public void setExampleString(String exampleString) {
-        mExampleString = exampleString;
-        invalidateTextPaintAndMeasurements();
-    }
-
-    /**
-     * Gets the example color attribute value.
-     *
-     * @return The example color attribute value.
-     */
-    public int getExampleColor() {
-        return mExampleColor;
-    }
-
-    /**
-     * Sets the view's example color attribute value. In the example view, this color
-     * is the font color.
-     *
-     * @param exampleColor The example color attribute value to use.
-     */
-    public void setExampleColor(int exampleColor) {
-        mExampleColor = exampleColor;
-        invalidateTextPaintAndMeasurements();
-    }
-
-    /**
-     * Gets the example dimension attribute value.
-     *
-     * @return The example dimension attribute value.
-     */
-    public float getExampleDimension() {
-        return mExampleDimension;
-    }
-
-    /**
-     * Sets the view's example dimension attribute value. In the example view, this dimension
-     * is the font size.
-     *
-     * @param exampleDimension The example dimension attribute value to use.
-     */
-    public void setExampleDimension(float exampleDimension) {
-        mExampleDimension = exampleDimension;
-        invalidateTextPaintAndMeasurements();
-    }
-
-    /**
-     * Gets the example drawable attribute value.
-     *
-     * @return The example drawable attribute value.
-     */
-    public Drawable getExampleDrawable() {
-        return mExampleDrawable;
-    }
-
-    /**
-     * Sets the view's example drawable attribute value. In the example view, this drawable is
-     * drawn above the text.
-     *
-     * @param exampleDrawable The example drawable attribute value to use.
-     */
-    public void setExampleDrawable(Drawable exampleDrawable) {
-        mExampleDrawable = exampleDrawable;
     }
 
     private Thread thread; // SurfaceView通常需要自己单独的线程来播放动画
@@ -202,14 +56,40 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     private GameObject obj;
 
-    //public GwgzVideoView(Context c) {
-    //    super(c);
-
-    //}
+    private void as(){
+        try {
+            Thread.sleep(50); // 这个就相当于帧频了，数值越小画面就越流畅
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void run() {
+        Paint p = new Paint();
+
         while (!bStop) {
+            byte[] frame = MainActy.getVideoFrame();
+            Log.i("MySurface",String.valueOf(frame.length));
+            if(frame.length == 1){
+                as();
+                continue;
+            }
+            if(frame.length == 2){
+                as();
+                continue;
+            }
+            try {
+                Thread.sleep(200); // 这个就相当于帧频了，数值越小画面就越流畅
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+
+            //BitmapFactory.Options op = new BitmapFactory.Options();
+            //Bitmap bm = BitmapFactory.decodeByteArray(frame,0,frame.length, op);
+            /*
             obj.getNextPos();
             canvas = this.surfaceHolder.lockCanvas(); // 通过lockCanvas加锁并得到該SurfaceView的画布
             if(canvas != null) {
@@ -217,11 +97,12 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 obj.drawSelf(canvas); // 把SurfaceView的画布传给物件，物件会用这个画布将自己绘制到上面的某个位置
                 this.surfaceHolder.unlockCanvasAndPost(canvas); // 释放锁并提交画布进行重绘
                 try {
-                    Thread.sleep(10); // 这个就相当于帧频了，数值越小画面就越流畅
+                    //Thread.sleep(10); // 这个就相当于帧频了，数值越小画面就越流畅
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+            */
         }
     }
 
@@ -255,7 +136,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         private Paint paint;
 
         public GameObject() {
+            //this.img = BitmapFactory.decodeByteArray()
             this.img = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+
             this.x = 100;
             this.y = 100;
             this.paint = new Paint();

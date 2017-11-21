@@ -1,6 +1,8 @@
 #include <jni.h>
 #include <string>
 #include <android/asset_manager_jni.h>
+#include <android/bitmap.h>
+#include <assert.h>
 #include "httpsdownloader.h"
 #include "crossanyapp.h"
 #include "gtmvreader.h"
@@ -33,6 +35,54 @@ extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_gtmvreaderP
     delete ptnow;
     delete ppubid;
     return 1;
+}
+
+extern "C" JNIEXPORT jbyteArray JNICALL Java_com_gwgz_tntplayer_MainActy_getVideoFrame(JNIEnv *env, jobject /* this */) {
+    jbyteArray  ar = (*env).NewByteArray(1);
+    uint8_t* rgbbuf = new uint8_t[1280 * 2048 * 3];
+    xiny120::GtmvData* v;
+
+    while (gtmvrender::me()->touchv() <= xiny120::AudioEngine::me()->mstart){
+        if ((v = gtmvrender::me()->popv()) != NULL && v->len != 0){
+            gtmvreader::yv12torgb24(rgbbuf,v->data,v->width,v->height);
+            (*env).DeleteLocalRef(ar);
+            ar = (*env).NewByteArray(1280 * 2048 * 3);
+            env->SetByteArrayRegion(ar,0,1280*2048*3,(jbyte*)rgbbuf);
+
+
+            //tex->initWithData(rgbbuf, v->len * 2, Texture2D::PixelFormat::RGB888, v->width, v->height, cocos2d::Size(v->width, v->height));
+            //cocos2d::Rect rc; cocos2d::Size s1 = Director::getInstance()->getWinSize(); cocos2d::Size s = tex->getContentSize();
+            //rc.setRect(0, 0, s.width, s.height);
+            //SpriteFrame* frame = SpriteFrame::createWithTexture(tex, rc);
+            //if (frame != NULL) spritev->setSpriteFrame(frame);
+            delete[](char*) v;
+            //lv->step();
+        }else{
+            if (v != NULL && v->len == 0) {
+                (*env).DeleteLocalRef(ar);
+                ar = (*env).NewByteArray(2);
+            }
+            if (v != NULL) delete v;
+            break;
+        }
+    }
+    delete [] rgbbuf;
+
+    return ar;
+}
+
+extern "C" JNIEXPORT jboolean JNICALL Java_com_gwgz_tntplayer_MainActy_setVideoSurface(JNIEnv *env, jobject /* this */,jobject jsurface) {
+    /*
+    surface = android_view_Surface_getSurface(env, jsurface);
+    if(android::Surface::isValid(surface)){
+        ALOGE("surface is valid ");
+    }else {
+        ALOGE("surface is invalid ");
+        return false;
+    }
+    ALOGE("[%s][%d]\n",__FILE__,__LINE__);*/
+    return true;
+
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_MainActy_audioEngineStop(JNIEnv *env, jobject /* this */) {
@@ -96,3 +146,4 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     // 返回jni的版本
     return JNI_VERSION_1_4;
 }
+

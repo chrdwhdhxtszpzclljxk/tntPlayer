@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Surface;
 import android.view.Window;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
@@ -161,4 +162,6 @@ public class MainActy extends AppCompatActivity {
     public native static void setUnPwd(String un,String pwd,String id);
     public native static void setAssetManager(Object o);
     public native static void audioEngineStop();
+    public native static byte[] getVideoFrame();
+    public native boolean setVideoSurface(Surface surface);
 }

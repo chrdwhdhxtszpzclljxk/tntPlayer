@@ -157,7 +157,7 @@ public class PlayActy extends AppCompatActivity {
             }
         });
 
-        //findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
         InitWebView();
 
 
@@ -291,7 +291,7 @@ public class PlayActy extends AppCompatActivity {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
-        //delayedHide(100);
+        delayedHide(3000);
     }
 
     private void toggle() {

@@ -19,6 +19,7 @@ private:
     ~gtmvreader(){};
     bool init();
     void httpsdownloaderThread();
+
     std::list<fileinfo*> listdl;
 
     std::atomic<bool> r, breaknow;
@@ -28,6 +29,8 @@ public:
     void push(std::string type,std::string tnow,std::string pubid,long);
     void setbreaknow(){ breaknow = true; };
     bool getbreaknow(){ return breaknow; };
+
+    static bool yv12torgb24(uint8_t* pRGB24, const uint8_t* pYV12, const int32_t& w, const int32_t& h, const int32_t& bottomup = 0, const int32_t& ibw = 0);
 };
 
 class gtmvrender{
@@ -38,6 +41,7 @@ public:
 public:
     gtmvrender(); ~gtmvrender();
     static gtmvrender* me();
+
     static void destroy();
     void pushv(xiny120::GtmvData*);
     xiny120::GtmvData* popv();
