@@ -238,6 +238,7 @@ public class PlayActy extends AppCompatActivity {
                             }
                         }).start();
                     }
+
                     MainActy.gtmvreaderPush("0",di.tnow,di.pubid,fileLength);
                 }catch(Exception e){
                     Log.d("PlayActy",e.getMessage());

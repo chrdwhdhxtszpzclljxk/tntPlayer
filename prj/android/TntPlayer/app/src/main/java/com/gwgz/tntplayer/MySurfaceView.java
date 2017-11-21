@@ -53,6 +53,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private Canvas canvas;
     private SurfaceHolder surfaceHolder;
     public boolean bStop = false;
+    public int w,h;
 
     private GameObject obj;
 
@@ -69,16 +70,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         Paint p = new Paint();
 
         while (!bStop) {
-            byte[] frame = MainActy.getVideoFrame();
-            Log.i("MySurface",String.valueOf(frame.length));
-            if(frame.length == 1){
-                as();
-                continue;
-            }
-            if(frame.length == 2){
-                as();
-                continue;
-            }
+            //byte[] frame = MainActy.getVideoFrame();
+            //Log.i("MySurface",String.valueOf(frame.length));
+
             try {
                 Thread.sleep(200); // 这个就相当于帧频了，数值越小画面就越流畅
             } catch (Exception e) {

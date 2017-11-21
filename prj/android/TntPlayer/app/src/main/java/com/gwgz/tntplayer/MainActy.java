@@ -162,6 +162,6 @@ public class MainActy extends AppCompatActivity {
     public native static void setUnPwd(String un,String pwd,String id);
     public native static void setAssetManager(Object o);
     public native static void audioEngineStop();
-    public native static byte[] getVideoFrame();
+    public native static String getVideoFrame(Bitmap bitmap);
     public native boolean setVideoSurface(Surface surface);
 }

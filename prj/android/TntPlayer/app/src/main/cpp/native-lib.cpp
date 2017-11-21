@@ -37,18 +37,20 @@ extern "C" JNIEXPORT jshort JNICALL Java_com_gwgz_tntplayer_MainActy_gtmvreaderP
     return 1;
 }
 
-extern "C" JNIEXPORT jbyteArray JNICALL Java_com_gwgz_tntplayer_MainActy_getVideoFrame(JNIEnv *env, jobject /* this */) {
+extern "C" JNIEXPORT jstring JNICALL Java_com_gwgz_tntplayer_MainActy_getVideoFrame(JNIEnv *env, jobject /* this */,jobject bitmap) {
     jbyteArray  ar = (*env).NewByteArray(1);
-    uint8_t* rgbbuf = new uint8_t[1280 * 2048 * 3];
+    uint8_t* rgbbuf = new uint8_t[1280 * 2048 * 4];
     xiny120::GtmvData* v;
 
     while (gtmvrender::me()->touchv() <= xiny120::AudioEngine::me()->mstart){
         if ((v = gtmvrender::me()->popv()) != NULL && v->len != 0){
             gtmvreader::yv12torgb24(rgbbuf,v->data,v->width,v->height);
-            (*env).DeleteLocalRef(ar);
-            ar = (*env).NewByteArray(1280 * 2048 * 3);
-            env->SetByteArrayRegion(ar,0,1280*2048*3,(jbyte*)rgbbuf);
 
+            // Lock the bitmap to get the buffer
+            void * pixels = NULL;
+            int res = AndroidBitmap_lockPixels(env, bitmap, &pixels);
+
+            AndroidBitmap_unlockPixels(env, bitmap);
 
             //tex->initWithData(rgbbuf, v->len * 2, Texture2D::PixelFormat::RGB888, v->width, v->height, cocos2d::Size(v->width, v->height));
             //cocos2d::Rect rc; cocos2d::Size s1 = Director::getInstance()->getWinSize(); cocos2d::Size s = tex->getContentSize();
@@ -59,8 +61,7 @@ extern "C" JNIEXPORT jbyteArray JNICALL Java_com_gwgz_tntplayer_MainActy_getVide
             //lv->step();
         }else{
             if (v != NULL && v->len == 0) {
-                (*env).DeleteLocalRef(ar);
-                ar = (*env).NewByteArray(2);
+
             }
             if (v != NULL) delete v;
             break;
@@ -68,7 +69,7 @@ extern "C" JNIEXPORT jbyteArray JNICALL Java_com_gwgz_tntplayer_MainActy_getVide
     }
     delete [] rgbbuf;
 
-    return ar;
+    return env->NewStringUTF("");
 }
 
 extern "C" JNIEXPORT jboolean JNICALL Java_com_gwgz_tntplayer_MainActy_setVideoSurface(JNIEnv *env, jobject /* this */,jobject jsurface) {

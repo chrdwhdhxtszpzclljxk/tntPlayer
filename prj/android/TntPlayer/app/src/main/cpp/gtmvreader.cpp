@@ -197,7 +197,8 @@ void gtmvreader::httpsdownloaderThread(){
                                         if (vprepare != NULL){
                                             vprepare->start = refStartV; refStartV += refTS; vprepare->end = refStartV;
                                             if (first){
-                                                gtmvrender::me()->h = mt.hei; gtmvrender::me()->w = mt.wid; gtmvrender::me()->fps = mt.frm;
+                                                gtmvrender::me()->setwh(mt.wid,mt.hei);
+                                                /*gtmvrender::me()->h = mt.hei; gtmvrender::me()->w = mt.wid;*/ gtmvrender::me()->fps = mt.frm;
                                                 gtmvrender::me()->frames = header.a; gtmvrender::me()->curframes = 0; gtmvrender::me()->seekframes = 0;
                                                 xiny120::GtmvData* vfirst = new xiny120::GtmvData; vfirst->id = atoi(ppubid); vfirst->type = xiny120::C_PU_VIDEO;
                                                 vfirst->width = mt.wid; vfirst->height = mt.hei; vfirst->start = mt.frm; vfirst->now = atoi(pfileId);
@@ -321,7 +322,7 @@ bool gtmvreader::yv12torgb24(uint8_t* pRGB24, const uint8_t* pYV12, const int32_
     if (nYLen < 1 || nHfWidth < 1) return false;
     const uint8_t* yData = pYV12, *vData = &yData[nYLen], *uData = &vData[nYLen >> 2]; // y,v,u;
     if (!uData || !vData) return false;
-    int rgb[3], i, j, m, n, x, y, py, rdif, invgdif, bdif;
+    int rgb[4], i, j, m, n, x, y, py, rdif, invgdif, bdif;
     m = 0 - w; n = 0 - nHfWidth;
     bool addhalf = true;
     for (y = 0; y < h; y++){ // ��
@@ -341,10 +342,11 @@ bool gtmvreader::yv12torgb24(uint8_t* pRGB24, const uint8_t* pYV12, const int32_
             rgb[0] = py + rdif;    // R
             rgb[1] = py - invgdif; // G
             rgb[2] = py + bdif;    // B
+            rgb[3] = 0;
             //====================
             if (bottomup) i = (m + x) * 3;
             else{ j = nYLen - w - m + x; i = (j << 1) + j; }
-            for (j = 0; j < 3; j++){	// copy this pixel to rgb data
+            for (j = 0; j < 4; j++){	// copy this pixel to rgb data
                 if (rgb[j] >= 0 && rgb[j] <= 255) pRGB24[i + j] = rgb[j];
                 else pRGB24[i + j] = (rgb[j] < 0) ? 0 : 255;
             }
@@ -365,6 +367,16 @@ uint64_t gtmvrender::touchv(){ uint64_t ret = 0; _lock lock(mtv); if (!v.empty()
 void gtmvrender::clear(){
     mtv.lock(); while (!v.empty()){ delete[](char*) v.front(); v.pop(); }; mtv.unlock();
 };
+
+void gtmvrender::setwh(int _w,int _h){
+    _lock lock(mtv);
+    w=_w;h=_h;
+}
+
+void gtmvrender::getwh(int& _w, int&_h){
+    _lock lock(mtv);
+    _w=w;_h=h;
+}
 
 void gtmvrender::resettimeline(const uint64_t& now){
     mtv.lock();

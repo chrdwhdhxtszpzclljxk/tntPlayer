@@ -81,6 +81,11 @@ find_library( # Sets the name of the path variable.
           # you want CMake to locate.
           OpenSLES )
 
+          find_library(
+          jnigraphics-lib
+          jnigraphics
+          )
+
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
@@ -94,4 +99,5 @@ target_link_libraries( # Specifies the target library.
                        ${log-lib}
                         ${android-lib}
                         ${OpenSLES-lib}
+                        ${jnigraphics-lib}
                        )

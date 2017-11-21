@@ -37,13 +37,18 @@ class gtmvrender{
 public:
     typedef std::lock_guard<std::recursive_mutex> _lock;
     typedef std::queue<xiny120::GtmvData*> avqueue;
-    std::atomic<int32_t> w, h, fps, frames, curframes, seekframes;
+    std::atomic<int32_t> fps, frames, curframes, seekframes;
+private:
+    std::atomic<int32_t> w, h;
+
 public:
     gtmvrender(); ~gtmvrender();
     static gtmvrender* me();
 
     static void destroy();
     void pushv(xiny120::GtmvData*);
+    void setwh(int w,int h);
+    void getwh(int& w, int&h);
     xiny120::GtmvData* popv();
     uint64_t touchv();
     void clear();
