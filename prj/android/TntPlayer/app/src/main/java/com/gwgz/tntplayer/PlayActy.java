@@ -419,7 +419,7 @@ public class PlayActy extends AppCompatActivity {
                     b.putString("cmd","dlprogress");
                     b.putString("dlprogress", String.valueOf(len));
                     msg.setData(b);
-                    Log.d("MyHandler", "sendMessage......" + String.valueOf(len) + fileName);
+                    //Log.d("MyHandler", "sendMessage......" + String.valueOf(len) + fileName);
                     PlayActy.this.myHandler.sendMessage(msg);
                 }
                 input.close();

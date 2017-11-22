@@ -47,6 +47,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/gtmvreader.cpp
              src/main/cpp/basesocket.cpp
              src/main/cpp/speex_jni.cpp
+             src/main/cpp/RenderOpenGles20.cpp
              ${LIBSPEEX}
              ${LIBANDROID}
              ${LIBCRYPTOPP565}

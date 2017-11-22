@@ -71,6 +71,7 @@ void ProcessBuffTrans(/*CryptoPP::BufferedTransformation& buf,*/ const byte* inp
     *outputlen = len;
 }
 
+
 void gtmvreader::httpsdownloaderThread(){
     std::srand(time(NULL));
     int i = 0;
@@ -121,11 +122,13 @@ void gtmvreader::httpsdownloaderThread(){
                     int8_t* pread,*pcur,*pbuf = NULL; int32_t markerspan[11],markerspanid = 0,markeridxlast = 0; short* amcur = (short*)a192k;
                     markerspan[0] = CCRANDOM_0_1() * (120 - 60) + 70;
                     for (i = 1; i < sizeof(markerspan) / sizeof(markerspan[0]); i++){ markerspan[i] = CCRANDOM_0_1() * (120 - 60) + 70; }
+                    int32_t rgb32len = mt.wid * mt.hei * 4;
                     int32_t yv12len = mt.wid * mt.hei * 3 / 2, total = yv12len * 10, left = total, readed = 0, datalen = 0,acount = 0,curreadsize = 0;
+                    rgb32len = yv12len;
                     uint8_t* yv12buf = new uint8_t[yv12len]; memset(yv12buf, 0, yv12len);
                     if (pbuf == NULL){ pbuf = new int8_t[total];  pread = pcur = pbuf; }
                     if (lastv == NULL){
-                        lastv = (xiny120::GtmvData*)new char[sizeof(xiny120::GtmvData) + yv12len];
+                        lastv = (xiny120::GtmvData*)new char[sizeof(xiny120::GtmvData) + rgb32len];
                         lastv->id = atoi(ppubid); lastv->type = xiny120::C_PU_VIDEO; lastv->len = yv12len; lastv->width = mt.wid; lastv->height = mt.hei;
                         lastv->now = atoi(pfileId); lastv->start = 0; lastv->end = 0; lastv->ticks = 0;
                     }
@@ -164,7 +167,7 @@ void gtmvreader::httpsdownloaderThread(){
                                 break;
                             }; // ���Ȳ���һ��node,���Ŷ�ȡ��
                             if (pnode->type == xiny120::C_PU_VIDEO){// ��ǰ֡����Ƶ֡
-                                xiny120::GtmvData* v = (xiny120::GtmvData*) new int8_t[yv12len + sizeof(*v)]; uint8_t* out = NULL;
+                                xiny120::GtmvData* v = (xiny120::GtmvData*) new int8_t[rgb32len + sizeof(*v)]; uint8_t* out = NULL;
                                 assert(v != 0);
                                 v->id = atoi(ppubid); v->type = xiny120::C_PU_VIDEO; v->len = yv12len; v->width = mt.wid; v->height = mt.hei;
                                 v->now = atoi(pfileId); v->start = 0; v->end = 0; v->ticks = 0;
@@ -173,13 +176,21 @@ void gtmvreader::httpsdownloaderThread(){
                                 int zliblen = 0;
                                 ProcessBuffTrans(pnode->data,pnode->len,&out,&zliblen);
                                 v->len = zliblen;
+                                __android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","解压数据：%d - yv12len(%d)",zliblen,yv12len);
                                 if (v->len == 0) {
                                     //bkeepcheckfile = true;
                                     breaknow = true;
                                 }
                                 for (i = 0; i < yv12len; i++){ out[i] ^= key; if (out[i] != 0) yv12buf[i] = out[i]; } // ���ء�
                                 delete [] out; memcpy(v->data, yv12buf, yv12len);
-                                mvq.push(v); memmove(lastv, v, sizeof(xiny120::GtmvData) + yv12len);	//SaveToBmp(v->data, mt.wid, mt.hei, 0);
+                                {
+                                    //uint8_t * rgb = new uint8_t[v->width * v->height * 4];
+                                    //gtmvreader::YV12_to_RGB32(v->data,yv12buf,v->width,v->height);
+                                    //delete [] rgb;
+                                }
+
+
+                                mvq.push(v); memmove(lastv, v, sizeof(xiny120::GtmvData) + rgb32len);	//SaveToBmp(v->data, mt.wid, mt.hei, 0);
                                 //log("mvq size:%d",mvq.size());
                             }
                             else if (pnode->type == xiny120::C_PU_AUDIO){ // ��ǰ֡����Ƶ֡
@@ -208,8 +219,8 @@ void gtmvreader::httpsdownloaderThread(){
                                         }
                                     }
                                     while (xiny120::AudioEngine::me()->isfull(len * 2) &&  (!breaknow)){
-                                        __android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","queue full!");
-                                        asleep(200);
+                                        //__android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","queue full!");
+                                        asleep(100);
                                     }
                                     if (markerspan[markerspanid] < totalframes){
                                         if (((unsigned char*)amcur - a192k) < a192klenloaded){
@@ -311,6 +322,66 @@ void gtmvreader::start() {
     static std::thread t1 (&gtmvreader::httpsdownloaderThread,this);
 
 }
+
+bool gtmvreader::shit(uint32_t iWidth, uint32_t iHeight){
+    uint32_t  a = iWidth / 2;
+    uint32_t b = iHeight / 2;
+    a = a+ b;
+    return false;
+}
+
+bool gtmvreader::YV12_to_RGB32(unsigned char* pRGB32,unsigned char* pYV12,  uint32_t iWidth, uint32_t iHeight)
+{
+    if (!pYV12 || !pRGB32)
+        return false;
+
+    const long nYLen = long(iHeight * iWidth);
+    const int32_t nHfWidth = (iWidth >> 1);
+
+    if (nYLen < 1 || nHfWidth < 1)
+        return false;
+
+    unsigned char* yData = pYV12;
+    unsigned char* vData = pYV12 + iWidth*iHeight + (iHeight / 2)*(iWidth / 2);//&vData[nYLen >> 2];
+    unsigned char* uData = pYV12 + iWidth*iHeight;// &yData[nYLen];
+    if (!uData || !vData)
+        return false;
+
+    int32_t rgb[4];
+    int32_t jCol, iRow;
+    for (iRow = 0; iRow < iHeight; iRow++)
+    {
+        for (jCol = 0; jCol < iWidth; jCol++)
+        {
+            rgb[3] = 1;
+
+            int32_t Y = yData[iRow*iWidth + jCol];
+            int32_t U = uData[(iRow / 2)*(iWidth / 2) + (jCol / 2)];
+            int32_t V = vData[(iRow / 2)*(iWidth / 2) + (jCol / 2)];
+            int32_t R = Y + (U - 128) + (((U - 128) * 103) >> 8);
+            int32_t G = Y - (((V - 128) * 88) >> 8) - (((U - 128) * 183) >> 8);
+            int32_t B = Y + (V - 128) + (((V - 128) * 198) >> 8);
+
+            // r分量值
+            R = R<0 ? 0 : R;
+            rgb[2] = R > 255 ? 255 : R;
+            // g分量值
+            G = G<0 ? 0 : G;
+            rgb[1] = G>255 ? 255 : G;
+            // b分量值
+            B = B<0 ? 0 : B;
+            rgb[0] = B>255 ? 255 : B;
+            pRGB32[4 * (iRow*iWidth + jCol) + 0] = rgb[0];
+            pRGB32[4 * (iRow*iWidth + jCol) + 1] = rgb[1];
+            pRGB32[4 * (iRow*iWidth + jCol) + 2] = rgb[2];
+            pRGB32[4 * (iRow*iWidth + jCol) + 3] = rgb[3];
+        }
+    }
+
+    return true;
+}
+
+
 const int32_t Table_fv1[256] = { -180, -179, -177, -176, -174, -173, -172, -170, -169, -167, -166, -165, -163, -162, -160, -159, -158, -156, -155, -153, -152, -151, -149, -148, -146, -145, -144, -142, -141, -139, -138, -137, -135, -134, -132, -131, -130, -128, -127, -125, -124, -123, -121, -120, -118, -117, -115, -114, -113, -111, -110, -108, -107, -106, -104, -103, -101, -100, -99, -97, -96, -94, -93, -92, -90, -89, -87, -86, -85, -83, -82, -80, -79, -78, -76, -75, -73, -72, -71, -69, -68, -66, -65, -64, -62, -61, -59, -58, -57, -55, -54, -52, -51, -50, -48, -47, -45, -44, -43, -41, -40, -38, -37, -36, -34, -33, -31, -30, -29, -27, -26, -24, -23, -22, -20, -19, -17, -16, -15, -13, -12, -10, -9, -8, -6, -5, -3, -2, 0, 1, 2, 4, 5, 7, 8, 9, 11, 12, 14, 15, 16, 18, 19, 21, 22, 23, 25, 26, 28, 29, 30, 32, 33, 35, 36, 37, 39, 40, 42, 43, 44, 46, 47, 49, 50, 51, 53, 54, 56, 57, 58, 60, 61, 63, 64, 65, 67, 68, 70, 71, 72, 74, 75, 77, 78, 79, 81, 82, 84, 85, 86, 88, 89, 91, 92, 93, 95, 96, 98, 99, 100, 102, 103, 105, 106, 107, 109, 110, 112, 113, 114, 116, 117, 119, 120, 122, 123, 124, 126, 127, 129, 130, 131, 133, 134, 136, 137, 138, 140, 141, 143, 144, 145, 147, 148, 150, 151, 152, 154, 155, 157, 158, 159, 161, 162, 164, 165, 166, 168, 169, 171, 172, 173, 175, 176, 178 };
 const int32_t Table_fv2[256] = { -92, -91, -91, -90, -89, -88, -88, -87, -86, -86, -85, -84, -83, -83, -82, -81, -81, -80, -79, -78, -78, -77, -76, -76, -75, -74, -73, -73, -72, -71, -71, -70, -69, -68, -68, -67, -66, -66, -65, -64, -63, -63, -62, -61, -61, -60, -59, -58, -58, -57, -56, -56, -55, -54, -53, -53, -52, -51, -51, -50, -49, -48, -48, -47, -46, -46, -45, -44, -43, -43, -42, -41, -41, -40, -39, -38, -38, -37, -36, -36, -35, -34, -33, -33, -32, -31, -31, -30, -29, -28, -28, -27, -26, -26, -25, -24, -23, -23, -22, -21, -21, -20, -19, -18, -18, -17, -16, -16, -15, -14, -13, -13, -12, -11, -11, -10, -9, -8, -8, -7, -6, -6, -5, -4, -3, -3, -2, -1, 0, 0, 1, 2, 2, 3, 4, 5, 5, 6, 7, 7, 8, 9, 10, 10, 11, 12, 12, 13, 14, 15, 15, 16, 17, 17, 18, 19, 20, 20, 21, 22, 22, 23, 24, 25, 25, 26, 27, 27, 28, 29, 30, 30, 31, 32, 32, 33, 34, 35, 35, 36, 37, 37, 38, 39, 40, 40, 41, 42, 42, 43, 44, 45, 45, 46, 47, 47, 48, 49, 50, 50, 51, 52, 52, 53, 54, 55, 55, 56, 57, 57, 58, 59, 60, 60, 61, 62, 62, 63, 64, 65, 65, 66, 67, 67, 68, 69, 70, 70, 71, 72, 72, 73, 74, 75, 75, 76, 77, 77, 78, 79, 80, 80, 81, 82, 82, 83, 84, 85, 85, 86, 87, 87, 88, 89, 90, 90 };
 const int32_t Table_fu1[256] = { -44, -44, -44, -43, -43, -43, -42, -42, -42, -41, -41, -41, -40, -40, -40, -39, -39, -39, -38, -38, -38, -37, -37, -37, -36, -36, -36, -35, -35, -35, -34, -34, -33, -33, -33, -32, -32, -32, -31, -31, -31, -30, -30, -30, -29, -29, -29, -28, -28, -28, -27, -27, -27, -26, -26, -26, -25, -25, -25, -24, -24, -24, -23, -23, -22, -22, -22, -21, -21, -21, -20, -20, -20, -19, -19, -19, -18, -18, -18, -17, -17, -17, -16, -16, -16, -15, -15, -15, -14, -14, -14, -13, -13, -13, -12, -12, -11, -11, -11, -10, -10, -10, -9, -9, -9, -8, -8, -8, -7, -7, -7, -6, -6, -6, -5, -5, -5, -4, -4, -4, -3, -3, -3, -2, -2, -2, -1, -1, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 11, 11, 11, 12, 12, 12, 13, 13, 13, 14, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 21, 21, 22, 22, 22, 23, 23, 23, 24, 24, 24, 25, 25, 25, 26, 26, 26, 27, 27, 27, 28, 28, 28, 29, 29, 29, 30, 30, 30, 31, 31, 31, 32, 32, 33, 33, 33, 34, 34, 34, 35, 35, 35, 36, 36, 36, 37, 37, 37, 38, 38, 38, 39, 39, 39, 40, 40, 40, 41, 41, 41, 42, 42, 42, 43, 43 };
@@ -322,7 +393,7 @@ bool gtmvreader::yv12torgb24(uint8_t* pRGB24, const uint8_t* pYV12, const int32_
     if (nYLen < 1 || nHfWidth < 1) return false;
     const uint8_t* yData = pYV12, *vData = &yData[nYLen], *uData = &vData[nYLen >> 2]; // y,v,u;
     if (!uData || !vData) return false;
-    int rgb[4], i, j, m, n, x, y, py, rdif, invgdif, bdif;
+    int rgb[3], i, j, m, n, x, y, py, rdif, invgdif, bdif;
     m = 0 - w; n = 0 - nHfWidth;
     bool addhalf = true;
     for (y = 0; y < h; y++){ // ��
@@ -342,11 +413,10 @@ bool gtmvreader::yv12torgb24(uint8_t* pRGB24, const uint8_t* pYV12, const int32_
             rgb[0] = py + rdif;    // R
             rgb[1] = py - invgdif; // G
             rgb[2] = py + bdif;    // B
-            rgb[3] = 0;
             //====================
             if (bottomup) i = (m + x) * 3;
             else{ j = nYLen - w - m + x; i = (j << 1) + j; }
-            for (j = 0; j < 4; j++){	// copy this pixel to rgb data
+            for (j = 0; j < 3; j++){	// copy this pixel to rgb data
                 if (rgb[j] >= 0 && rgb[j] <= 255) pRGB24[i + j] = rgb[j];
                 else pRGB24[i + j] = (rgb[j] < 0) ? 0 : 255;
             }
@@ -354,7 +424,6 @@ bool gtmvreader::yv12torgb24(uint8_t* pRGB24, const uint8_t* pYV12, const int32_
     }
     return true;
 }
-
 
 static gtmvrender* __gtmvrender = NULL;
 gtmvrender::gtmvrender(){}

@@ -16,7 +16,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+import org.json.JSONTokener;
+
 import java.nio.Buffer;
+import java.nio.ByteBuffer;
 
 /**
  * TODO: document your custom view class.
@@ -68,10 +74,48 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void run() {
         Paint p = new Paint();
+        ByteBuffer src = ByteBuffer.allocateDirect(720*576*4);
 
         while (!bStop) {
             //byte[] frame = MainActy.getVideoFrame();
             //Log.i("MySurface",String.valueOf(frame.length));
+            String wh = MainActy.getVideowh();
+            try {
+                JSONTokener jsonParser = new JSONTokener(wh);
+                // 此时还未读取任何json文本，直接读取就是一个JSONObject对象。
+                // 如果此时的读取位置在"name" : 了，那么nextValue就是"yuanzhifei89"（String）
+                JSONObject person = (JSONObject) jsonParser.nextValue();
+                // 接下来的就是JSON对象的操作了
+                int w = person.getInt("w");
+                int h = person.getInt("h");
+                if(w > 0 && h > 0) {
+                    Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+                    int srclen = w * h * 4;
+
+                    if(MainActy.getVideoFrame1(src,srclen)) {
+
+                        bm.copyPixelsFromBuffer(src);
+                        canvas = this.surfaceHolder.lockCanvas(); // 通过lockCanvas加锁并得到該SurfaceView的画布
+                        if (canvas != null) {
+                            //canvas.drawColor(Color.BLACK);
+                            canvas.drawBitmap(bm, 0, 0, null);
+                            //obj.drawSelf(canvas); // 把SurfaceView的画布传给物件，物件会用这个画布将自己绘制到上面的某个位置
+                            this.surfaceHolder.unlockCanvasAndPost(canvas); // 释放锁并提交画布进行重绘
+                            try {
+                                //Thread.sleep(10); // 这个就相当于帧频了，数值越小画面就越流畅
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+                   // bm.recycle();
+
+                }
+            } catch (JSONException ex) {
+                // 异常处理代码
+            }
+
 
             try {
                 Thread.sleep(200); // 这个就相当于帧频了，数值越小画面就越流畅

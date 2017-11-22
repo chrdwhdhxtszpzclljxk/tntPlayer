@@ -18,6 +18,7 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,7 @@ public class MainActy extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         listdl = new HashMap<String, DownloadItem>();
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.acty_main);
@@ -155,6 +157,7 @@ public class MainActy extends AppCompatActivity {
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
+
     public native static String stringFromJNI();
     public native static short initNdkApp();
     public native static short gtmvreaderPush(String type,String tnow,String pubid,long filelen);
@@ -162,6 +165,10 @@ public class MainActy extends AppCompatActivity {
     public native static void setUnPwd(String un,String pwd,String id);
     public native static void setAssetManager(Object o);
     public native static void audioEngineStop();
-    public native static String getVideoFrame(Bitmap bitmap);
-    public native boolean setVideoSurface(Surface surface);
+    public native static void getVideoFrame(Bitmap bitmap);
+    public native static boolean getVideoFrame1(ByteBuffer buf,int len);
+    public native static boolean setVideoSurface(Surface surface);
+    public native static String getVideowh();
+    public static native void init(Object glSurface);
+    public static native void step(String filepath);
 }

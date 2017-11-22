@@ -256,8 +256,8 @@
 		uint32_t ticks;
 		uint64_t start;
 		uint64_t end;
-		uint64_t width;
-		uint64_t height;
+		uint32_t width;
+		uint32_t height;
 		uint32_t type;					// 0 for Audio, 1 for Video
 		uint32_t len;
 		uint8_t data[1];

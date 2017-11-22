@@ -29,7 +29,8 @@ public:
     void push(std::string type,std::string tnow,std::string pubid,long);
     void setbreaknow(){ breaknow = true; };
     bool getbreaknow(){ return breaknow; };
-
+    static bool YV12_to_RGB32(unsigned char* pRGB32, unsigned char* pYV12, uint32_t iWidth, uint32_t iHeight);
+    static bool shit(uint32_t iWidth, uint32_t iHeight);
     static bool yv12torgb24(uint8_t* pRGB24, const uint8_t* pYV12, const int32_t& w, const int32_t& h, const int32_t& bottomup = 0, const int32_t& ibw = 0);
 };
 
