@@ -35,10 +35,7 @@ public class MainActy extends AppCompatActivity {
     static public String userid;
 
 
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,14 +47,10 @@ public class MainActy extends AppCompatActivity {
         verifyStoragePermissions(this);
         String path = getFilesDir().getAbsolutePath();
         basePath = path;
-        setWritablePath(path);
-        setAssetManager(getAssets());
-        if(initNdkApp() < 1)
+        GL2JNILib.setWritablePath(path);
+        GL2JNILib.setAssetManager(getAssets());
+        if(GL2JNILib.initNdkApp() < 1)
             Toast.makeText(MainActy.this,"创建https下载失败",Toast.LENGTH_LONG).show();
-
-        // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
 
         WebView wv = (WebView)findViewById(R.id.mainWebView);
         WebSettings wst = wv.getSettings();
@@ -97,7 +90,7 @@ public class MainActy extends AppCompatActivity {
                                     MainActy.un = uri.getQueryParameter("un");
                                     MainActy.pwd = uri.getQueryParameter("pwd");
                                     MainActy.userid = uri.getQueryParameter("userid");
-                                    setUnPwd(MainActy.un,MainActy.pwd,MainActy.userid);
+                                    GL2JNILib.setUnPwd(MainActy.un,MainActy.pwd,MainActy.userid);
                                 }
 
                                 result.confirm("js调用了Android的方法成功啦");
@@ -158,17 +151,5 @@ public class MainActy extends AppCompatActivity {
      * which is packaged with this application.
      */
 
-    public native static String stringFromJNI();
-    public native static short initNdkApp();
-    public native static short gtmvreaderPush(String type,String tnow,String pubid,long filelen);
-    public native static void setWritablePath(String path);
-    public native static void setUnPwd(String un,String pwd,String id);
-    public native static void setAssetManager(Object o);
-    public native static void audioEngineStop();
-    public native static void getVideoFrame(Bitmap bitmap);
-    public native static boolean getVideoFrame1(ByteBuffer buf,int len);
-    public native static boolean setVideoSurface(Surface surface);
-    public native static String getVideowh();
-    public static native void init(Object glSurface);
-    public static native void step(String filepath);
+
 }

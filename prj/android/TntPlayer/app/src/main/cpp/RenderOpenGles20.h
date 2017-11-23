@@ -12,6 +12,7 @@
 #include <android/log.h>
 #include <cstdlib>
 #include <cstring>
+#include <GLES2/gl2.h>
 
 class RenderOpenGles20 {
 public:

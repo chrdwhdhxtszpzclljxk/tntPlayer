@@ -79,7 +79,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         while (!bStop) {
             //byte[] frame = MainActy.getVideoFrame();
             //Log.i("MySurface",String.valueOf(frame.length));
-            String wh = MainActy.getVideowh();
+            String wh = GL2JNILib.getVideowh();
             try {
                 JSONTokener jsonParser = new JSONTokener(wh);
                 // 此时还未读取任何json文本，直接读取就是一个JSONObject对象。
@@ -92,7 +92,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                     Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
                     int srclen = w * h * 4;
 
-                    if(MainActy.getVideoFrame1(src,srclen)) {
+                    if(GL2JNILib.getVideoFrame1(src,srclen)) {
 
                         bm.copyPixelsFromBuffer(src);
                         canvas = this.surfaceHolder.lockCanvas(); // 通过lockCanvas加锁并得到該SurfaceView的画布

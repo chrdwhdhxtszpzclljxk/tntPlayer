@@ -48,6 +48,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/basesocket.cpp
              src/main/cpp/speex_jni.cpp
              src/main/cpp/RenderOpenGles20.cpp
+             src/main/cpp/gl_code.cpp
              ${LIBSPEEX}
              ${LIBANDROID}
              ${LIBCRYPTOPP565}
@@ -76,18 +77,26 @@ find_library( # Sets the name of the path variable.
 
 
 find_library( # Sets the name of the path variable.
-          OpenSLES-lib
+          GLESv2-lib
 
           # Specifies the name of the NDK library that
           # you want CMake to locate.
-          OpenSLES )
+          GLESv2 )
 
           find_library(
           jnigraphics-lib
           jnigraphics
           )
 
+          find_library(
+                     EGL-lib
+                     EGL
+                     )
 
+          find_library(
+          OpenSLES-lib
+          OpenSLES
+          )
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
@@ -99,6 +108,8 @@ target_link_libraries( # Specifies the target library.
                        # included in the NDK.
                        ${log-lib}
                         ${android-lib}
-                        ${OpenSLES-lib}
+                        ${GLESv2-lib}
                         ${jnigraphics-lib}
+                        ${EGL-lib}
+                        ${OpenSLES-lib}
                        )

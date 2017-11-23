@@ -1,6 +1,7 @@
 #include "AudioEngine_android.h"
 #include "../gtmvreader.h"
 #include <string>
+#include <cstring>
 
 NS_XINY120_BEGIN
 

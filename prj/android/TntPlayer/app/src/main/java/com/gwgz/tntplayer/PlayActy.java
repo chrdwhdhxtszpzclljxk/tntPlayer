@@ -132,13 +132,22 @@ public class PlayActy extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(new MySurfaceView(getApplicationContext())); // 别忘了开始的时候载入我们加工好的的SurfaceView
-        setContentView(R.layout.acty_play);
-        myHandler = new MyHandler();
+        //setContentView(R.layout.acty_play);
+        setContentView(new GL2JNIView(getApplicationContext())); // 别忘了开始的时候载入我们加工好的的SurfaceView
         Bundle bundle = this.getIntent().getExtras();
         String type = bundle.getString("type");
         String tnow = bundle.getString("tnow");
         String pubid = bundle.getString("pubid");
+        try {
+            getHttpfileLength(tnow,pubid);
+            return;
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
+        if(true) return;
+
+        myHandler = new MyHandler();
+
         mVisible = true;
         //mContentView = new MySurfaceView(getApplicationContext());//findViewById(R.id.fullscreen_content);
         //FrameLayout fl = findViewById(R.id.framelayout_main);
@@ -161,12 +170,7 @@ public class PlayActy extends AppCompatActivity {
         InitWebView();
 
 
-        try {
-            getHttpfileLength(tnow,pubid);
-            return;
-        }catch(Exception e){
-            System.out.println(e.toString());
-        }
+
 
     }
 
@@ -239,7 +243,7 @@ public class PlayActy extends AppCompatActivity {
                         }).start();
                     }
 
-                    MainActy.gtmvreaderPush("0",di.tnow,di.pubid,fileLength);
+                    GL2JNILib.gtmvreaderPush("0",di.tnow,di.pubid,fileLength);
                 }catch(Exception e){
                     Log.d("PlayActy",e.getMessage());
                 }
@@ -281,7 +285,7 @@ public class PlayActy extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        MainActy.audioEngineStop();
+        GL2JNILib.audioEngineStop();
         super.onPause();
     }
 
@@ -304,6 +308,7 @@ public class PlayActy extends AppCompatActivity {
     }
 
     private void hide() {
+        if(true) return;
         // Hide UI first
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -319,6 +324,7 @@ public class PlayActy extends AppCompatActivity {
 
     @SuppressLint("InlinedApi")
     private void show() {
+        if(true) return;
         // Show the system bar
         mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
@@ -420,7 +426,7 @@ public class PlayActy extends AppCompatActivity {
                     b.putString("dlprogress", String.valueOf(len));
                     msg.setData(b);
                     //Log.d("MyHandler", "sendMessage......" + String.valueOf(len) + fileName);
-                    PlayActy.this.myHandler.sendMessage(msg);
+                    //PlayActy.this.myHandler.sendMessage(msg);
                 }
                 input.close();
                 output.flush();
