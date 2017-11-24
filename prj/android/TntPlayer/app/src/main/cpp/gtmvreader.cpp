@@ -118,6 +118,7 @@ void gtmvreader::httpsdownloaderThread(){
             if (fp != 0) {
                 if (((fread(&header, 1, sizeof(header), fp) == sizeof(header)) && (fread(&mt, 1, sizeof(mt), fp) == sizeof(mt)))){
                     __android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","open success %s",path);
+                    gtmvrender::me()->clear();
                     std::queue<xiny120::GtmvData*> mvq; xiny120::GtmvData* lastv = NULL; uint64_t refTS,refStartV = 0,totalframes = 0; bool first = true;
                     int8_t* pread,*pcur,*pbuf = NULL; int32_t markerspan[11],markerspanid = 0,markeridxlast = 0; short* amcur = (short*)a192k;
                     markerspan[0] = CCRANDOM_0_1() * (120 - 60) + 70;
@@ -176,7 +177,7 @@ void gtmvreader::httpsdownloaderThread(){
                                 int zliblen = 0;
                                 ProcessBuffTrans(pnode->data,pnode->len,&out,&zliblen);
                                 v->len = rgb32len;
-                                __android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","解压数据：%d - yv12len(%d)",zliblen,yv12len);
+                                //__android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","解压数据：%d - yv12len(%d)",zliblen,yv12len);
                                 if (zliblen == 0) {
                                     //bkeepcheckfile = true;
                                     breaknow = true;

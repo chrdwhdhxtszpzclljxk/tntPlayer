@@ -49,6 +49,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/speex_jni.cpp
              src/main/cpp/RenderOpenGles20.cpp
              src/main/cpp/gl_code.cpp
+             src/main/cpp/gl_code2.cpp
              ${LIBSPEEX}
              ${LIBANDROID}
              ${LIBCRYPTOPP565}
@@ -83,6 +84,14 @@ find_library( # Sets the name of the path variable.
           # you want CMake to locate.
           GLESv2 )
 
+find_library( # Sets the name of the path variable.
+          GLESv1_CM-lib
+
+          # Specifies the name of the NDK library that
+          # you want CMake to locate.
+          GLESv1_CM )
+
+
           find_library(
           jnigraphics-lib
           jnigraphics
@@ -112,4 +121,5 @@ target_link_libraries( # Specifies the target library.
                         ${jnigraphics-lib}
                         ${EGL-lib}
                         ${OpenSLES-lib}
+                        ${GLESv1_CM-lib}
                        )

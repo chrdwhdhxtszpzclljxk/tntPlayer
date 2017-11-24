@@ -30,13 +30,20 @@ JNIEXPORT jboolean JNICALL Java_com_gwgz_tntplayer_GL2JNILib_getVideoFrame1(JNIE
 
 JNIEXPORT jboolean JNICALL Java_com_gwgz_tntplayer_GL2JNILib_setVideoSurface(JNIEnv *env, jobject /* this */,jobject jsurface);
 JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_audioEngineStop(JNIEnv *env, jobject /* this */);
+JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_audioEnginePause(JNIEnv *env, jobject /* this */);
+JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_audioEngineResume(JNIEnv *env, jobject /* this */);
 JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_setUnPwd(JNIEnv *env, jobject /* this */,jstring un,jstring pwd,jstring userid);
 JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_setWritablePath(JNIEnv *env, jobject /* this */,jstring path);
-JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_init(JNIEnv * env, jobject obj,  jint width, jint height);
-JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_step(JNIEnv * env, jobject obj);
+//JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_init(JNIEnv * env, jobject obj,  jint width, jint height);
+//JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_step(JNIEnv * env, jobject obj);
+
+JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_resize(JNIEnv * env, jobject obj,  jint width, jint height);
+JNIEXPORT jlong JNICALL Java_com_gwgz_tntplayer_GL2JNILib_step(JNIEnv * env, jobject obj);
+JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_init(JNIEnv * env, jobject obj);
+JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_setTexture(JNIEnv * env, jclass obj, jintArray tex);
 
 };
-
+//
 
 
 

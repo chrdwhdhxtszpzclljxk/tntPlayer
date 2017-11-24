@@ -124,8 +124,16 @@ JNIEXPORT jboolean JNICALL Java_com_gwgz_tntplayer_GL2JNILib_setVideoSurface(JNI
 
 JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_audioEngineStop(JNIEnv *env, jobject /* this */) {
     gtmvreader::me()->setbreaknow();
-
 }
+
+JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_audioEnginePause(JNIEnv *env, jobject /* this */) {
+    xiny120::AudioEngine::me()->pause();
+}
+
+JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_audioEngineResume(JNIEnv *env, jobject /* this */) {
+    xiny120::AudioEngine::me()->resume();
+}
+
 
 JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_setUnPwd(JNIEnv *env, jobject /* this */,jstring un,jstring pwd,jstring userid) {
     crossanyapp::me()->setun(jstring2string(env,un));

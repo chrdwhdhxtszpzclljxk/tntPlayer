@@ -30,22 +30,24 @@ public class GL2JNILib {
         System.loadLibrary("native-lib");
     }
 
-    /**
-     * @param width the current view width
-     * @param height the current view height
-     */
-     public static native void init(int width, int height);
-     public static native void step();
+
     public native static short initNdkApp();
     public native static short gtmvreaderPush(String type,String tnow,String pubid,long filelen);
     public native static void setWritablePath(String path);
     public native static void setUnPwd(String un,String pwd,String id);
     public native static void setAssetManager(Object o);
     public native static void audioEngineStop();
+    public native static void audioEnginePause();
+    public native static void audioEngineResume();
     public native static void getVideoFrame(Bitmap bitmap);
     public native static boolean getVideoFrame1(ByteBuffer buf, int len);
     public native static boolean setVideoSurface(Surface surface);
     public native static String getVideowh();
     public static native void init(Object glSurface);
     public static native void step(String filepath);
+    //public static native void init(int width, int height);
+    public static native void resize(int width, int height);
+    public static native long step();
+    public static native void init();
+    public static native void setTexture(int[] texture);
 }

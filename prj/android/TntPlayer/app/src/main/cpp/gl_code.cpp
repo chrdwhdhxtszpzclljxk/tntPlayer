@@ -151,7 +151,7 @@ bool setupGraphics(int w, int h) {
 const GLfloat gTriangleVertices[] = { 0.0f, 0.5f, -0.5f, -0.5f,
         0.5f, -0.5f };
 
-void renderFrame() {
+void renderFrame1() {
     /*
     static float grey;
     grey += 0.01f;
@@ -227,7 +227,7 @@ JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_init(JNIEnv * env, jobj
     setupGraphics(width, height);
 }
 
-JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_step(JNIEnv * env, jobject obj)
+JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_step1(JNIEnv * env, jobject obj)
 {
-    renderFrame();
+    renderFrame1();
 }

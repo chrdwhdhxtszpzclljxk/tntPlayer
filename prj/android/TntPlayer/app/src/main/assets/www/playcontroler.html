@@ -12,28 +12,38 @@
   <!-- Path to your custom app styles-->
   <link rel="stylesheet" href="css/my-app.css?1">
   <style>
-    .col-pc-20{
-
-    }
+      i.demo-icon-play {
+        width: 48px;
+        height: 48px;
+        background-image: url("img/resume.png");
+      }
+      .active i.demo-icon-play {
+        background-image: url("img/pause.png");
+      }
   </style>
 </head>
-<body>
+<body style="background-color:#000">
 <!-- Views -->
-<div class="views">
+<div class="views"  style="background-color:#000">
   <!-- Your main view -->
   <div class="view view-main">
     <div class="pages">
       <div data-page="about" class="page">
-        <div class="page-content">
-          <div class="row no-gutter">
-            <div class="col-20">33%</div>
-            <div class="col-auto">33%</div>
-            <div class="col-20">33%</div>
+        <div class="page-content"  style="background-color:#000">
+          <div class="row no-gutter" style="background-color:#000">
+            <div class="col-20"></div>
+            <div class="col-auto" style="text-align:center;"><i class="icon demo-icon-play" style="margin-top:6px;"></i></div>
+            <div class="col-20"></div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Path to Framework7 Library JS-->
+<script type="text/javascript" src="js/framework7.min.js"></script>
+<script type="text/javascript" src="js/playcontrol.js"></script>
+
 </body>
 </html>

@@ -77,7 +77,7 @@ public class PlayActy extends AppCompatActivity {
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
-    private View mContentView;
+    private GLJNIView  mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -129,34 +129,21 @@ public class PlayActy extends AppCompatActivity {
         }
     };
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.acty_play);
-        setContentView(new GL2JNIView(getApplicationContext())); // 别忘了开始的时候载入我们加工好的的SurfaceView
+        setContentView(R.layout.acty_play);
+        //setContentView(new GLJNIView(getApplicationContext())); // 别忘了开始的时候载入我们加工好的的SurfaceView
         Bundle bundle = this.getIntent().getExtras();
         String type = bundle.getString("type");
         String tnow = bundle.getString("tnow");
         String pubid = bundle.getString("pubid");
-        try {
-            getHttpfileLength(tnow,pubid);
-            return;
-        }catch(Exception e){
-            System.out.println(e.toString());
-        }
-        if(true) return;
+
 
         myHandler = new MyHandler();
-
         mVisible = true;
-        //mContentView = new MySurfaceView(getApplicationContext());//findViewById(R.id.fullscreen_content);
-        //FrameLayout fl = findViewById(R.id.framelayout_main);
-
-        //FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
-         //       new FrameLayout.LayoutParams(FrameLayout.LayoutParams.FILL_PARENT,
-          //              FrameLayout.LayoutParams.FILL_PARENT));
-
-        //fl.addView(mContentView);
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
         mContentView.setOnClickListener(new View.OnClickListener() {
@@ -165,16 +152,14 @@ public class PlayActy extends AppCompatActivity {
                 toggle();
             }
         });
-
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
         InitWebView();
-
-
-
-
+        try {
+            getHttpfileLength(tnow,pubid);
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
     }
-
-
 
 
     private void  getHttpfileLength(String tnow0,String pubid0) {
@@ -285,8 +270,30 @@ public class PlayActy extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        GL2JNILib.audioEngineStop();
+
         super.onPause();
+        GL2JNILib.audioEnginePause();
+        mContentView.onPause();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GL2JNILib.audioEngineResume();
+        mContentView.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //GL2JNILib.audioEngineStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        GL2JNILib.audioEngineStop();
     }
 
     @Override
@@ -308,7 +315,7 @@ public class PlayActy extends AppCompatActivity {
     }
 
     private void hide() {
-        if(true) return;
+        //if(true) return;
         // Hide UI first
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -324,7 +331,7 @@ public class PlayActy extends AppCompatActivity {
 
     @SuppressLint("InlinedApi")
     private void show() {
-        if(true) return;
+        //if(true) return;
         // Show the system bar
         mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
@@ -539,20 +546,12 @@ public class PlayActy extends AppCompatActivity {
                                 String acionData = uri.getQueryParameter("cmd");
                                 String par1 = uri.getQueryParameter("arg1");
 
-                                if(acionData.equals("toast")){
-                                    Toast.makeText(PlayActy.this, par1, Toast.LENGTH_LONG).show();
-                                }else if(acionData.equals("play")){
-                                    String type = uri.getQueryParameter("type");
-                                    String tnow = uri.getQueryParameter("tnow");
-                                    String pubid = uri.getQueryParameter("pubid");
-                                    Intent intent = new Intent();
-                                    intent.setClass(PlayActy.this, PlayActy.class);
-                                    Bundle bundle=new Bundle();
-                                    bundle.putString("type",type );
-                                    bundle.putString("tnow",tnow );
-                                    bundle.putString("pubid",pubid );
-                                    intent.putExtras(bundle);
-                                    startActivity(intent);
+                                if(acionData.equals("pause")){
+
+                                    GL2JNILib.audioEnginePause();
+                                }else if(acionData.equals("resume")){
+                                    GL2JNILib.audioEngineResume();
+
                                 }else if(acionData.equals("login")){
 
                                 }
