@@ -57,6 +57,9 @@ const GLfloat PI = 3.1415f;
 // 旋转角度
 static GLfloat gAngle = 0.0f;
 
+GLfloat x = 1000.0f,y = 1000.0f,ii = 20;
+
+
 GLfloat w = 360;
 GLfloat h = 288;
 GLfloat z = 0.1f;
@@ -66,6 +69,17 @@ const GLfloat gVerticesSquare[] = {
         w, -h, 0.0f,  // 右下
         -w, h, 0.0f,  // 左上
         w, h, 0.0f    // 右上
+};
+
+GLfloat wv = 60;
+GLfloat hv = 60;
+GLfloat zv = 0.1f;
+
+const GLfloat gVerticesSquareV[] = {
+        -wv, -hv, 0.0f, // 左下
+        wv, -hv, 0.0f,  // 右下
+        -wv, hv, 0.0f,  // 左上
+        wv, hv, 0.0f    // 右上
 };
 
 //（0,1)（左上角）、(1,1)(右上角)、(1,0)(右下角)、（0，0）(左下角）
@@ -159,9 +173,14 @@ void renderFrame() {
     glEnable(GL_TEXTURE_2D);                                // 启用纹理映射
     glBindTexture(GL_TEXTURE_2D, gTexture0[0]);              // 选择纹理
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);            // 启用纹理坐标数组
-
     glTranslatef(0.0f,0.0f,-288.0f);                         // 设置矩形形位置
     glVertexPointer(3, GL_FLOAT, 0, gVerticesSquare);       // 指定顶点数组
+    glTexCoordPointer(2, GL_FLOAT, 0, gTextureSquareCoord); // 设置纹理坐标
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);                  // 绘制正方形
+
+    glTranslatef(x,y,0.0f);
+    glBindTexture(GL_TEXTURE_2D, gTexture[0]);              // 选择纹理
+    glVertexPointer(3, GL_FLOAT, 0, gVerticesSquareV);       // 指定顶点数组
     glTexCoordPointer(2, GL_FLOAT, 0, gTextureSquareCoord); // 设置纹理坐标
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);                  // 绘制正方形
 
@@ -170,7 +189,7 @@ void renderFrame() {
     // 关闭纹理数组
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisable(GL_TEXTURE_2D);
-
+   // x=x+1;
 }
 
 int64_t getframes(){
@@ -201,6 +220,21 @@ void genTexture(){
 
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, v->width, v->height, 0,
                              GL_RGB, GL_UNSIGNED_BYTE, v->data);
+                if(ii <= 0) {
+                    x = v->width / 2 - ((float) v->width * (rand() / float(RAND_MAX + 1.0)));
+                    y = v->height / 2 - ((float) v->height * (rand() / float(RAND_MAX + 1.0)));
+                    //if (abs(y) < 180) y = 180;
+
+                    if (abs(y) > (v->height / 2 - 60)) y = v->height / 2 - 60;
+                    if(y > 0.0f) y = 0.0f - y;
+                    LOGI("rand %.2f , %.2f", x, y);
+                    ii = 20;
+                }
+                if(ii <= 8){
+                    x = 1000.0f;
+                    y = 1000.0f;
+                }
+                ii--;
             }
 
             delete[](char*) v;
@@ -235,6 +269,7 @@ JNIEXPORT jlong JNICALL Java_com_gwgz_tntplayer_GL2JNILib_step(JNIEnv * env, job
 
 JNIEXPORT void JNICALL Java_com_gwgz_tntplayer_GL2JNILib_init(JNIEnv * env, jobject obj)
 {
+    srand(time(NULL));
     z = 1.0f;
     init();
 

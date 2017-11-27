@@ -1,10 +1,11 @@
+var $$ = Dom7;
 // Initialize your app
 var myApp = new Framework7({
     onPageInit:pageInit,
 });
 
 // Export selectors engine
-var $$ = Dom7;
+
 var ui={'login':false,'userguid':''};
 
 // Add views
@@ -17,10 +18,8 @@ var view3 = myApp.addView('#view-3');
 var view4 = myApp.addView('#view-4');
 
 
-// Pull to refresh content
-var ptrContent = $$('.pull-to-refresh-content');
-ptrContent.on('refresh', function (e) {
-    var that = $$(e.currentTarget);
+function get_message(e){
+    var that = Dom7(e);
     var lastdate = that.data('lastdate');
     var iconpath = that.data('iconpath');
     var viewtype = that.data('viewtype');
@@ -58,7 +57,43 @@ ptrContent.on('refresh', function (e) {
         myApp.pullToRefreshDone();
       },
     });
+}
+
+
+// Pull to refresh content
+var ptrContent = $$('.pull-to-refresh-content');
+ptrContent.on('refresh', function (e) {
+    get_message(e.currentTarget);
 });
+
+// Loading flag
+var loading = false;
+var lastIndex = 2;
+var maxItems = 60;
+var itemsPerLoad = 20;
+// Attach 'infinite' event handler
+$$('.infinite-scroll').on('infinite', function () {
+  if (loading) return;
+  loading = true;
+  setTimeout(function () {
+    loading = false;
+    if (lastIndex >= maxItems) {
+      myApp.detachInfiniteScroll($$('.infinite-scroll'));
+      $$('.infinite-scroll-preloader').remove();
+      return;
+    }
+    var html = '';
+    for (var i = lastIndex + 1; i <= lastIndex + itemsPerLoad; i++) {
+      html += '<li class="item-content"><div class="item-inner"><div class="item-title">Item ' + i + '</div></div></li>';
+    }
+
+    // Append new items
+    $$('.list-block ul').append(html);
+    lastIndex = $$('.list-block li').length;
+  }, 1000);
+});
+
+
 
 $$('ul').on('click', '.item-content', function (e) {
     if(!ui.login){

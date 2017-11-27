@@ -22,8 +22,10 @@ package com.gwgz.tntplayer;
  * author: mnorst@foxmail.com
  */
 
+        import java.io.File;
         import java.io.IOException;
         import java.io.InputStream;
+        import java.util.Hashtable;
 
         import javax.microedition.khronos.egl.EGLConfig;
         import javax.microedition.khronos.opengles.GL10;
@@ -87,7 +89,7 @@ public class GLJNIView extends GLSurfaceView {
             long base = 1000000;
             long totalf = l / base;
             long curf = l  - totalf * base;
-            Log.d("", "onDrawFrame: " + Long.toString(totalf) + "," + Long.toString(curf));
+            //Log.d("", "onDrawFrame: " + Long.toString(totalf) + "," + Long.toString(curf));
         }
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -113,6 +115,10 @@ public class GLJNIView extends GLSurfaceView {
 
                 // 利用BitmapFactory生成Bitmap
                 bitmap = BitmapFactory.decodeStream(is);
+
+                String str = "http://gwgz.com/?t=" + MainActy.userid;// 二维码内容
+                bitmap = createBitmap(str,300,300);
+
             } finally {
                 try {
 
@@ -127,6 +133,35 @@ public class GLJNIView extends GLSurfaceView {
             return bitmap;
 
         }
+
+
+        public Bitmap createBitmap(String str,int w,int h ) {
+            try {
+                Hashtable<EncodeHintType, Integer> hints = new Hashtable<EncodeHintType, Integer>();
+                hints.put(EncodeHintType.MARGIN, 1); //设置二维码空白边框的大小 1-4，1是最小 4是默认的国标
+
+                BitMatrix matrix = new MultiFormatWriter().encode(str, BarcodeFormat.QR_CODE, w, h,hints);
+                int width = matrix.getWidth();
+                int height = matrix.getHeight();
+                int[] pixels = new int[width*height];
+                for(int y = 0; y<width; ++y){
+                    for(int x = 0; x<height; ++x){
+                        if(matrix.get(x, y)){
+                            pixels[y*width+x] = 0xff000000; // black pixel
+                        } else {
+                            pixels[y*width+x] = 0xffffffff; // white pixel
+                        }
+                    }
+                }
+                Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                bmp.setPixels(pixels, 0, width, 0, 0, width, height);
+                return bmp;
+            } catch (WriterException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
 
         /**
          * 绑定Bitmap纹理

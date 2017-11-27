@@ -18,3 +18,11 @@ $$('.demo-icon-play').on('click', function (e) {
     }
 
 });
+
+
+
+$$('.demo-icon-stop').on('click', function (e) {
+    var that = $$(this);
+    prompt("js://cpp?cmd=stop");
+
+});

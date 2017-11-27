@@ -84,7 +84,7 @@
       <div class="pages ">
         <div data-page="index-2" class="page">
 
-          <div class="page-content pull-to-refresh-content" data-viewtype="gpk" data-iconpath="https://gpk01.gwgz.com:666/images/tnt/00.jpg">
+          <div class="page-content pull-to-refresh-content  infinite-scroll" data-viewtype="gpk" data-iconpath="https://gpk01.gwgz.com:666/images/tnt/00.jpg">
             <div class="pull-to-refresh-layer">
               <div class="preloader"></div>
               <div class="pull-to-refresh-arrow"></div>
@@ -93,6 +93,10 @@
               <ul >
 
               </ul>
+              <!-- Preloader -->
+              <div class="infinite-scroll-preloader">
+                <div class="preloader"></div>
+              </div>
               <div class="list-block-label">
                 <p>下拉可以刷新当前页面.</p>
               </div>
@@ -136,11 +140,12 @@
         <div data-page="index-4" class="page">
           <div class="navbar">
             <div class="navbar-inner">
-              <div class="center">Settings</div>
+              <div class="center">我的</div>
             </div>
           </div>
           <div class="page-content">
-            <div class="list-block">
+            <div>游客</div>
+            <div class="list-block" style="display:none;">
               <ul>
                 <li>
                   <div class="item-content">
@@ -252,7 +257,7 @@
               </ul>
             </div>
             <div class="content-block">
-              <p>Mauris commodo lacus at nisl lacinia, nec facilisis erat rhoncus. Sed eget pharetra nunc. Aenean vitae vehicula massa, sed sagittis ante. Quisque luctus nec velit dictum convallis. Nulla facilisi. Ut sed erat nisi. Donec non dolor massa. Mauris malesuada dolor velit, in suscipit leo consectetur vitae. Duis tempus ligula non eros pretium condimentum. Cras sed dolor odio.</p>
+              <p></p>
             </div>
           </div>
         </div>
@@ -332,7 +337,7 @@
     <!-- Path to Framework7 Library JS-->
     <script type="text/javascript" src="js/framework7.min.js"></script>
     <!-- Path to your app js-->
-    <script type="text/javascript" src="js/pageInit.js"></script>
+    <script type="text/javascript" src="js/pageInit.js?a"></script>
     <script type="text/javascript" src="js/my-app.js?a"></script>
 
 

@@ -552,8 +552,9 @@ public class PlayActy extends AppCompatActivity {
                                 }else if(acionData.equals("resume")){
                                     GL2JNILib.audioEngineResume();
 
-                                }else if(acionData.equals("login")){
-
+                                }else if(acionData.equals("stop")){
+                                    GL2JNILib.audioEngineStop();
+                                    PlayActy.this.finish();
                                 }
                                 result.confirm("js调用了Android的方法成功啦");
                             }
