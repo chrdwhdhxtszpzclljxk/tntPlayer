@@ -1,6 +1,7 @@
 var $$ = Dom7;
 // Initialize your app
 var myApp = new Framework7({
+    init:false,
     onPageInit:pageInit,
 });
 
@@ -16,6 +17,9 @@ var view2 = myApp.addView('#view-2', {
 });
 var view3 = myApp.addView('#view-3');
 var view4 = myApp.addView('#view-4');
+
+
+myApp.init();
 
 
 function get_message(e){
@@ -75,6 +79,7 @@ var itemsPerLoad = 20;
 $$('.infinite-scroll').on('infinite', function () {
   if (loading) return;
   loading = true;
+  var that = this;
   setTimeout(function () {
     loading = false;
     if (lastIndex >= maxItems) {
@@ -88,8 +93,8 @@ $$('.infinite-scroll').on('infinite', function () {
     }
 
     // Append new items
-    $$('.list-block ul').append(html);
-    lastIndex = $$('.list-block li').length;
+    $$(that).find('.list-block ul').append(html);
+    lastIndex = $$(that).find('.list-block li').length;
   }, 1000);
 });
 
@@ -104,6 +109,10 @@ $$('ul').on('click', '.item-content', function (e) {
     var itemdata = JSON.parse(that.data("itemdata"));
     if(itemdata[5] == "92b3bc2f-124d-4c96-85e7-a81f2cdadfea"){
        prompt("js://cpp?cmd=play&type="+itemdata[5]+"&tnow="+itemdata[1]+"&pubid="+itemdata[8]);
+    }else if(itemdata[5] == "10014ae2-d809-4f79-aca7-86eda531aa99"){
+        prompt("js://cpp?cmd=play&type="+itemdata[5]+"&tnow="+itemdata[1]+"&pubid="+itemdata[8]);
+    }else if(itemdata[5] == "73ff5a6c-db13-41a0-8dce-c31109ed8d9a"){
+
     }
 
 });
@@ -130,6 +139,7 @@ $$('a.login-button').on('click',function(){
             prompt("js://cpp?cmd=login&un="+un+"&pwd="+pwd+"&userid="+data.rd.rows[0][1]);
             ui.login = true;
             ui.userguid=data.rd.rows[0][0];
+            $$('.my-name').html(un);
            // });
             myApp.closeModal();
             }

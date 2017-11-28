@@ -9,3 +9,7 @@ function pageInit(app,page){
 
     }
 }
+
+function pageBeforeAnimation(app,page){
+    alert(page.name);
+}

@@ -48,8 +48,12 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -190,7 +194,7 @@ public class PlayActy extends AppCompatActivity {
                         PlayActy.this.myHandler.sendMessage(msg);
                         return;
                     }
-                    URL u = new URL(di.geturl());
+                    URL u = new URL(di.geturl01());
                     HttpURLConnection urlcon = (HttpURLConnection) u.openConnection();
                     urlcon.setRequestProperty("Accept-Encoding", "identity");
                     int fileLength = urlcon.getContentLength();
@@ -219,7 +223,23 @@ public class PlayActy extends AppCompatActivity {
                                 if(di != null) {
                                     //show();
                                     HttpDownloader downloader = new HttpDownloader();
-                                    int result = downloader.downloadFile(di.geturl(), di.getpath(),di.getfile());//"/data/" + pubid0 + "/", tnow0 + ".gtmv");
+                                    //String [] urls = {di.geturl04(),di.geturl02(),di.geturl03()};
+                                    List<String> urll = new ArrayList<String>();
+                                    urll.add(di.geturl04());
+                                    urll.add(di.geturl03());
+                                    urll.add(di.geturl02());
+                                    Collections.shuffle(urll);
+                                    urll.add(di.geturl01());
+                                    Iterator ite = urll.iterator();
+                                    while(ite.hasNext()){
+                                        String url = ite.next().toString();
+                                        Log.i("downloader:", url);
+                                        int result = downloader.downloadFile(url, di.getpath(),di.getfile());//"/data/" + pubid0 + "/", tnow0 + ".gtmv");
+                                        if(result == 0)
+                                            break;
+                                    }
+
+
                                     synchronized (MainActy.listdl){
                                         MainActy.listdl.remove(key0);
                                     }
