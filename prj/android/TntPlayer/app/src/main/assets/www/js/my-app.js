@@ -24,10 +24,12 @@ myApp.init();
 
 function get_message(e){
     var that = Dom7(e);
+    var predate = that.data('predate');
     var lastdate = that.data('lastdate');
     var iconpath = that.data('iconpath');
     var viewtype = that.data('viewtype');
     if (typeof(lastdate) == "undefined"){  lastdate = 0;  }
+    if (typeof(predate) == "undefined"){  predate = 9999999999999;  }
     $$.ajax({
       url: 'https://gpk01.gwgz.com:666/ashx/gpk_message_get.ashx',
       data:{'topflag':lastdate,'viewtype':viewtype},
@@ -39,6 +41,7 @@ function get_message(e){
             $$.each(data.rd.rows, function (index, value) {
                 var val = value[1];
                 if(lastdate < val) lastdate = val;
+                if(predate > val) predate = val;
                 var author = '唐能通';
                 itemHTML = itemHTML + '<li class="item-content" data-itemdata=\''+JSON.stringify(value)+'\'>' +
                                   '<div class="item-media"><img src="' + iconpath + '" width="44"/></div>' +
@@ -49,11 +52,10 @@ function get_message(e){
                                     '<div class="item-subtitle">' + author + '</div>' +
                                   '</div>' +
                                 '</li>';
-
-
             });
             that.find('ul').prepend(itemHTML);
             that.data('lastdate',lastdate);
+            that.data('predate',predate);
         }else{ prompt("js://cpp?cmd=toast&arg1=" + data.err);  }
       },
       error:function (xhr, status){ prompt("js://cpp?cmd=toast&arg1=网络访问遇到错误(" + status + ")");  },
@@ -70,16 +72,67 @@ ptrContent.on('refresh', function (e) {
     get_message(e.currentTarget);
 });
 
+
 // Loading flag
 var loading = false;
 var lastIndex = 2;
 var maxItems = 60;
 var itemsPerLoad = 20;
+
+function get_message_last(e){
+
+    var that = Dom7(e);
+    var predate = that.data('predate');
+    var lastdate = that.data('lastdate');
+    var iconpath = that.data('iconpath');
+    var viewtype = that.data('viewtype');
+    if (typeof(lastdate) == "undefined"){  lastdate = 0;  }
+    if (typeof(predate) == "undefined"){  predate = 9999999999999;  }
+    $$.ajax({
+      url: 'https://gpk01.gwgz.com:666/ashx/gpk_message_get_last.ashx',
+      data:{'topflag':predate,'viewtype':viewtype},
+      dataType:'json',
+      success: function (data, status, xhr){
+      loading = false;
+        if(data.cs=="1"){
+            var itemHTML="";
+            if(data.rd.rows.length < 1) prompt("js://cpp?cmd=toast&arg1=获取数据动作成功！暂无最新数据！");
+            $$.each(data.rd.rows, function (index, value) {
+                var val = value[1];
+                if(lastdate < val) lastdate = val;
+                if(predate > val) predate = val;
+                var author = '唐能通';
+                itemHTML = itemHTML + '<li class="item-content" data-itemdata=\''+JSON.stringify(value)+'\'>' +
+                                  '<div class="item-media"><img src="' + iconpath + '" width="44"/></div>' +
+                                  '<div class="item-inner">' +
+                                    '<div class="item-title-row">' +
+                                      '<div class="item-title">' + value[3] + '</div>' +
+                                    '</div>' +
+                                    '<div class="item-subtitle">' + author + '</div>' +
+                                  '</div>' +
+                                '</li>';
+            });
+            that.find('ul').append(itemHTML);
+            that.data('lastdate',lastdate);
+            that.data('predate',predate);
+        }else{ prompt("js://cpp?cmd=toast&arg1=" + data.err);  }
+      },
+      error:function (xhr, status){ prompt("js://cpp?cmd=toast&arg1=网络访问遇到错误(" + status + ")");  },
+      complete:function (xhr, status){
+        myApp.pullToRefreshDone();
+      },
+    });
+}
+
+
+
 // Attach 'infinite' event handler
 $$('.infinite-scroll').on('infinite', function () {
   if (loading) return;
   loading = true;
   var that = this;
+  get_message_last(this);
+  /*
   setTimeout(function () {
     loading = false;
     if (lastIndex >= maxItems) {
@@ -95,7 +148,7 @@ $$('.infinite-scroll').on('infinite', function () {
     // Append new items
     $$(that).find('.list-block ul').append(html);
     lastIndex = $$(that).find('.list-block li').length;
-  }, 1000);
+  }, 1000);*/
 });
 
 

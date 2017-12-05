@@ -99,8 +99,8 @@ void gtmvreader::httpsdownloaderThread(){
         const char* pfileId = fi->fileId.c_str();
         sprintf(path,"%s/data/%s/%s.gtmv",ppath,ppubid,pfileId);
         __android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","%s",path);
-        int retry = 10;
-        int retryspan = 2;
+        int retry = 40;
+        int retryspan = 1;
         bool ok = false;
         xiny120::GTMVHEADER header; xiny120::VAPUSHMT mt; xiny120::GTMVNODE* pnode;
 
@@ -278,6 +278,10 @@ void gtmvreader::httpsdownloaderThread(){
                 }
                 fclose(fp);
 
+
+            }
+            else{
+                __android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","打开文件失败！%s",path);
 
             }
 
