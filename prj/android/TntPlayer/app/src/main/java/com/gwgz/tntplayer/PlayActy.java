@@ -517,6 +517,15 @@ public class PlayActy extends AppCompatActivity {
                 if(filesys.isFileExist(path + fileName)){
                     filesys.remove(path+fileName);
                 }
+                //Toast.makeText(PlayActy.this,"正在缓冲课件内容，请稍后...",Toast.LENGTH_LONG).show();
+                Message msg = new Message();
+                Bundle b = new Bundle();// 存放数据
+                b.putString("cmd","toast");
+                b.putString("msg", "正在缓冲课件内容，请稍后...");
+                msg.setData(b);
+                //Log.d("MyHandler", "sendMessage......" + String.valueOf(len) + fileName);
+                PlayActy.this.myHandler.sendMessage(msg);
+
                 inputStream = getInputStreamFromUrlStr(urlStr);
                 File resultFile = filesys.write2SDFromInput(path, fileName, inputStream);
                 if(resultFile == null)
@@ -624,7 +633,8 @@ public class PlayActy extends AppCompatActivity {
 
 
 
-        wv.loadUrl("file:///android_asset/www/playcontroler.html");
+        //wv.loadUrl("file:///android_asset/www/playcontroler.html");
+        wv.loadUrl("https://gpk01.gwgz.com:666/www/playcontroler.html");
     }
 
 

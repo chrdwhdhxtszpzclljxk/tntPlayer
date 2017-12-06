@@ -132,23 +132,7 @@ $$('.infinite-scroll').on('infinite', function () {
   loading = true;
   var that = this;
   get_message_last(this);
-  /*
-  setTimeout(function () {
-    loading = false;
-    if (lastIndex >= maxItems) {
-      myApp.detachInfiniteScroll($$('.infinite-scroll'));
-      $$('.infinite-scroll-preloader').remove();
-      return;
-    }
-    var html = '';
-    for (var i = lastIndex + 1; i <= lastIndex + itemsPerLoad; i++) {
-      html += '<li class="item-content"><div class="item-inner"><div class="item-title">Item ' + i + '</div></div></li>';
-    }
 
-    // Append new items
-    $$(that).find('.list-block ul').append(html);
-    lastIndex = $$(that).find('.list-block li').length;
-  }, 1000);*/
 });
 
 
@@ -165,7 +149,9 @@ $$('ul').on('click', '.item-content', function (e) {
     }else if(itemdata[5] == "10014ae2-d809-4f79-aca7-86eda531aa99"){
         prompt("js://cpp?cmd=play&type="+itemdata[5]+"&tnow="+itemdata[1]+"&pubid="+itemdata[8]);
     }else if(itemdata[5] == "73ff5a6c-db13-41a0-8dce-c31109ed8d9a"){
-
+        myApp.popup('.popup-about');
+        $$('.popup-title').html(itemdata[3]);
+        $$('.popup-content').html(itemdata[4]);
     }
 
 });
