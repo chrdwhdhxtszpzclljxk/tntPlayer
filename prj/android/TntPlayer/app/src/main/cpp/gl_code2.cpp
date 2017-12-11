@@ -60,8 +60,11 @@ static GLfloat gAngle = 0.0f;
 GLfloat x = 1000.0f,y = 1000.0f,ii = 20;
 
 
-GLfloat w = 360;
-GLfloat h = 288;
+//GLfloat w = 360;
+//GLfloat h = 288;
+GLfloat w = 320;
+GLfloat h = 240;
+
 GLfloat z = 0.1f;
 
 const GLfloat gVerticesSquare[] = {

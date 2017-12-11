@@ -142,8 +142,8 @@ public class MainActy extends AppCompatActivity {
 
 
 
-        //wv.loadUrl("file:///android_asset/www/index.html");
-        wv.loadUrl("https://gpk01.gwgz.com:666/www/index.html");
+        wv.loadUrl("file:///android_asset/www/index.html");
+        //wv.loadUrl("https://gpk01.gwgz.com:666/www/index.html");
 
 
     }
