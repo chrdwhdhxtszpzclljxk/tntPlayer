@@ -177,7 +177,7 @@ void AudioEngine::stop(){
 		enger = 0;
 	}
 
-	waveoutreset = true; mopen = false; mpause = false; mstart = 0xffffffffffffffff;
+	waveoutreset = true; mopen = false; mpause = false; mstart = 0;
 	//SLObjectItf aud; SLEngineItf aud_eng; SLObjectItf aud_mix; SLObjectItf aud_player; SLPlayItf player_ctrl; SLBufferQueueItf aud_buf;// ��������Ķ������  ��������  ������������� ����������
 }
 

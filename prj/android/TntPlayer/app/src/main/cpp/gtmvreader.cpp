@@ -66,7 +66,10 @@ void ProcessBuffTrans(/*CryptoPP::BufferedTransformation& buf,*/ const byte* inp
     buf.Put(input, inputlen);
     buf.MessageEnd();
     int len = buf.MaxRetrievable();
-    *output = new byte[len];
+    if(len > *outputlen) {
+        delete [] *output;
+        *output = new byte[len];
+    }
     buf.Get(*output, len);
     *outputlen = len;
 }
@@ -127,6 +130,7 @@ void gtmvreader::httpsdownloaderThread(){
                     int32_t yv12len = mt.wid * mt.hei * 3 / 2, total = yv12len * 10, left = total, readed = 0, datalen = 0,acount = 0,curreadsize = 0;
                     //rgb32len = yv12len;
                     uint8_t* yv12buf = new uint8_t[yv12len]; memset(yv12buf, 0, yv12len);
+                    uint8_t* out = new uint8_t[yv12len]; memset(out, 0, yv12len);
                     if (pbuf == NULL){ pbuf = new int8_t[total];  pread = pcur = pbuf; }
                     if (lastv == NULL){
                         lastv = (xiny120::GtmvData*)new char[sizeof(xiny120::GtmvData) + rgb32len];
@@ -168,13 +172,13 @@ void gtmvreader::httpsdownloaderThread(){
                                 break;
                             }; // ���Ȳ���һ��node,���Ŷ�ȡ��
                             if (pnode->type == xiny120::C_PU_VIDEO){// ��ǰ֡����Ƶ֡
-                                xiny120::GtmvData* v = (xiny120::GtmvData*) new int8_t[rgb32len + sizeof(*v)]; uint8_t* out = NULL;
+                                xiny120::GtmvData* v = (xiny120::GtmvData*) new int8_t[rgb32len + sizeof(*v)];
                                 assert(v != 0);
                                 v->id = atoi(ppubid); v->type = xiny120::C_PU_VIDEO; v->len = rgb32len; v->width = mt.wid; v->height = mt.hei;
                                 v->now = atoi(pfileId); v->start = 0; v->end = 0; v->ticks = 0;
 
                                 //v->len = ZipUtils::inflateMemoryWithHint(pnode->data, pnode->len, &out, yv12len);
-                                int zliblen = 0;
+                                int zliblen = yv12len;
                                 ProcessBuffTrans(pnode->data,pnode->len,&out,&zliblen);
                                 v->len = rgb32len;
                                 //__android_log_print(ANDROID_LOG_INFO,"JNI/gtmvreader","解压数据：%d - yv12len(%d)",zliblen,yv12len);
@@ -183,7 +187,7 @@ void gtmvreader::httpsdownloaderThread(){
                                     breaknow = true;
                                 }
                                 for (i = 0; i < yv12len; i++){ out[i] ^= key; if (out[i] != 0) yv12buf[i] = out[i]; } // ���ء�
-                                delete [] out; //memcpy(v->data, yv12buf, yv12len);
+                                //delete [] out; //memcpy(v->data, yv12buf, yv12len);
                                 {
                                     //uint8_t * rgb = new uint8_t[v->width * v->height * 4];
                                     gtmvreader::yv12torgb24(v->data,yv12buf,v->width,v->height);
@@ -201,8 +205,8 @@ void gtmvreader::httpsdownloaderThread(){
                                     dec.decode((char*)pnode->data, pnode->len, (short*)a, len);
                                     int32_t addframes = mt.frm - mvq.size();
                                     while (addframes > 0){
-                                        xiny120::GtmvData* add = (xiny120::GtmvData*) new int8_t[yv12len + sizeof(*add)];
-                                        memmove(add, lastv, yv12len + sizeof(*add)); mvq.push(add); addframes--;
+                                        xiny120::GtmvData* add = (xiny120::GtmvData*) new int8_t[rgb32len + sizeof(*add)];
+                                        memmove(add, lastv, rgb32len + sizeof(*add)); mvq.push(add); addframes--;
                                     };
                                     while (!mvq.empty()){
                                         xiny120::GtmvData* vprepare = mvq.front(); mvq.pop();

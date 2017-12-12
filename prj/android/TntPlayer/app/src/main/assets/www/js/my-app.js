@@ -146,16 +146,19 @@ $$('.infinite-scroll').on('infinite', function () {
 
 
 $$('ul').on('click', '.item-content', function (e) {
+    //
+    var that = $$(this);
+    var itemdata = JSON.parse(that.data("itemdata"));
+    if(itemdata[5] == "10014ae2-d809-4f79-aca7-86eda531aa99"){
+        prompt("js://cpp?cmd=play&type="+itemdata[5]+"&tnow="+itemdata[1]+"&pubid="+itemdata[8]);
+    }else{
     if(!ui.login){
         myApp.loginScreen();
         return;
     }
-    var that = $$(this);
-    var itemdata = JSON.parse(that.data("itemdata"));
+}
     if(itemdata[5] == "92b3bc2f-124d-4c96-85e7-a81f2cdadfea"){
        prompt("js://cpp?cmd=play&type="+itemdata[5]+"&tnow="+itemdata[1]+"&pubid="+itemdata[8]);
-    }else if(itemdata[5] == "10014ae2-d809-4f79-aca7-86eda531aa99"){
-        prompt("js://cpp?cmd=play&type="+itemdata[5]+"&tnow="+itemdata[1]+"&pubid="+itemdata[8]);
     }else if(itemdata[5] == "73ff5a6c-db13-41a0-8dce-c31109ed8d9a"){
         myApp.popup('.popup-about');
         $$('.popup-title').html(itemdata[3]);
