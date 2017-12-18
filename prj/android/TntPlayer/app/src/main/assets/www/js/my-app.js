@@ -43,7 +43,7 @@ function get_message(e){
             var itemHTML="";
             if(data.rd.rows.length < 1 && get_message_auto){
                 prompt("js://cpp?cmd=toast&arg1=获取数据动作成功！暂无最新数据！");
-                get_message_auto = false;
+
              }
             $$.each(data.rd.rows, function (index, value) {
                 var val = value[1];
@@ -67,7 +67,8 @@ function get_message(e){
       },
       error:function (xhr, status){ prompt("js://cpp?cmd=toast&arg1=网络访问遇到错误(" + status + ")");  },
       complete:function (xhr, status){
-        myApp.pullToRefreshDone();
+        if(get_message_auto) myApp.pullToRefreshDone();
+        get_message_auto = false;
       },
     });
 }
